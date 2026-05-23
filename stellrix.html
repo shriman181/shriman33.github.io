@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stellrix — Field Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g900:#091A0B;--g800:#112216;--g700:#1C3A22;--g600:#2A5430;
+  --g500:#3A7040;--g400:#559458;--g300:#7EBD82;--g200:#AEDBB1;
+  --g100:#D3EDCF;--g50:#EBF6EB;
+  --cream:#F6F2EA;--cream2:#EDE6D6;--cream3:#E4DBC8;
+  --gold:#B8934A;--goldl:#E9D5A0;--goldm:#D4AE6A;
+  --text:#0A1C0C;--textm:#2E4E32;--texts:#607B64;
+  --font-serif:'Cormorant Garamond',Georgia,serif;
+  --font-sans:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-sans);background:var(--cream);color:var(--text);overflow-x:hidden;line-height:1.6}
+img{display:block}
+.container{max-width:1160px;margin:0 auto;padding:0 32px}
+.fade-up{opacity:0;transform:translateY(28px);transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1)}
+.fade-up.visible{opacity:1;transform:none}
+.sec-eye{font-size:11px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.13em;margin-bottom:16px}
+.sec-eye.light{color:var(--g300)}
+.sec-title{font-family:var(--font-serif);font-size:clamp(34px,4vw,54px);font-weight:500;color:var(--g900);line-height:1.1;margin-bottom:14px}
+.sec-title.light{color:#fff}
+.sec-sub{font-size:16px;color:var(--texts);max-width:540px;line-height:1.75;margin-bottom:60px}
+.sec-sub.light{color:rgba(255,255,255,.48)}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:18px 0;transition:background .35s,box-shadow .35s}
+nav.scrolled{background:rgba(246,242,234,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 1px 0 rgba(10,28,12,.07)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:1160px;margin:0 auto;padding:0 32px}
+.logo{font-family:var(--font-serif);font-size:26px;font-weight:700;color:#fff;letter-spacing:-.02em;text-decoration:none;transition:color .25s}
+nav.scrolled .logo{color:var(--g800)}
+.logo em{font-style:italic;color:var(--goldl)}
+nav.scrolled .logo em{color:var(--gold)}
+.nav-links{display:flex;gap:24px;list-style:none}
+.nav-links a{font-size:13px;font-weight:500;text-decoration:none;color:rgba(255,255,255,.7);transition:color .2s;letter-spacing:.01em}
+nav.scrolled .nav-links a{color:var(--texts)}
+.nav-links a:hover{color:#fff}
+nav.scrolled .nav-links a:hover{color:var(--g700)}
+.nav-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;padding:9px 20px;border-radius:100px;font-size:13px;font-weight:500;text-decoration:none;transition:background .2s,transform .15s}
+nav.scrolled .nav-btn{background:var(--g700);border-color:var(--g700);color:#fff}
+.nav-btn:hover{background:rgba(255,255,255,.22);transform:translateY(-1px)}
+nav.scrolled .nav-btn:hover{background:var(--g600)}
+
+/* HERO */
+#hero{min-height:100vh;position:relative;overflow:hidden;background:linear-gradient(160deg,var(--g900) 0%,#0F2814 35%,var(--g700) 72%,#3A6840 100%);display:flex;align-items:center;padding:120px 0 0}
+#hero::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");opacity:.45}
+.hero-glow{position:absolute;border-radius:50%;pointer-events:none;z-index:0}
+.glow-1{width:640px;height:640px;background:radial-gradient(circle,rgba(84,148,88,.18) 0%,transparent 70%);top:-180px;right:-120px}
+.glow-2{width:400px;height:400px;background:radial-gradient(circle,rgba(184,147,74,.1) 0%,transparent 70%);bottom:100px;left:-80px}
+.glow-3{width:280px;height:280px;background:radial-gradient(circle,rgba(126,189,130,.1) 0%,transparent 70%);bottom:200px;right:200px}
+.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1fr 480px;gap:60px;align-items:center;width:100%;max-width:1160px;margin:0 auto;padding:0 32px 80px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:100px;padding:6px 16px;margin-bottom:28px;font-size:11px;font-weight:500;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.1em}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--g300);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.4)}}
+.hero-title{font-family:var(--font-serif);font-size:clamp(50px,6.5vw,88px);font-weight:600;line-height:1.03;color:#fff;letter-spacing:-.025em;margin-bottom:24px}
+.hero-title em{font-style:italic;color:var(--goldl)}
+.hero-sub{font-size:17px;font-weight:300;color:rgba(255,255,255,.58);line-height:1.75;max-width:480px;margin-bottom:40px}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:56px}
+.btn-p{background:var(--g400);color:#fff;padding:13px 26px;border-radius:100px;font-size:14px;font-weight:500;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:background .2s,transform .15s}
+.btn-p:hover{background:var(--g300);color:var(--g900);transform:translateY(-2px)}
+.btn-g{background:transparent;border:1px solid rgba(255,255,255,.24);color:rgba(255,255,255,.82);padding:13px 26px;border-radius:100px;font-size:14px;font-weight:400;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:border-color .2s,transform .15s}
+.btn-g:hover{border-color:rgba(255,255,255,.5);transform:translateY(-2px)}
+.hero-stats{display:flex;gap:36px}
+.hstat-num{font-family:var(--font-serif);font-size:36px;font-weight:600;color:var(--g200);line-height:1}
+.hstat-lbl{font-size:11px;color:rgba(255,255,255,.38);margin-top:5px;text-transform:uppercase;letter-spacing:.07em}
+.hero-dash{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:26px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.dash-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.dash-label{font-size:12px;font-weight:500;color:rgba(255,255,255,.42);text-transform:uppercase;letter-spacing:.08em}
+.live-tag{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--g300);font-weight:500}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--g300);animation:pulse 1.5s ease-in-out infinite}
+.d-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.d-cell{background:rgba(255,255,255,.06);border-radius:12px;padding:14px}
+.d-lbl{font-size:10px;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.d-val{font-family:var(--font-serif);font-size:24px;font-weight:600;color:#fff;line-height:1}
+.d-val span{font-size:13px;color:rgba(255,255,255,.35)}
+.d-chg{font-size:11px;margin-top:4px}
+.up{color:var(--g300)}.warn{color:var(--goldl)}
+.dash-chart{display:flex;align-items:flex-end;gap:3px;height:56px;margin-bottom:14px}
+.dbar{flex:1;border-radius:3px 3px 0 0;background:rgba(126,189,130,.22);animation:growUp .6s ease forwards;transform-origin:bottom}
+.dbar.hi{background:rgba(126,189,130,.65)}
+@keyframes growUp{from{transform:scaleY(0)} to{transform:scaleY(1)}}
+.dash-row{display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.04);border-radius:10px;padding:11px 14px}
+.dr-name{font-size:12px;color:rgba(255,255,255,.5)}
+.dr-badge{background:rgba(126,189,130,.2);color:var(--g300);border-radius:100px;padding:3px 10px;font-size:11px;font-weight:500}
+.wheat-wrap{position:absolute;bottom:0;left:0;right:0;height:130px;z-index:1;pointer-events:none;overflow:hidden}
+
+/* TICKER */
+.ticker{background:var(--g700);padding:11px 0;overflow:hidden;position:relative;z-index:3}
+.ticker-track{display:flex;white-space:nowrap;animation:tickerScroll 50s linear infinite}
+.t-item{display:inline-flex;align-items:center;gap:8px;padding:0 36px;font-size:12px;font-weight:400;color:rgba(255,255,255,.6)}
+.t-item strong{color:var(--g200);font-weight:500}
+.t-sep{color:var(--goldm);font-size:14px}
+@keyframes tickerScroll{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+
+/* PROBLEM */
+#problem{background:var(--g900);padding:110px 0;position:relative;overflow:hidden}
+.prob-rings{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.prob-ring{position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.04);top:50%;left:50%;transform:translate(-50%,-50%)}
+.prob-eye{font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.13em;margin-bottom:20px}
+.prob-title{font-family:var(--font-serif);font-size:clamp(34px,4.5vw,60px);font-weight:500;color:#fff;line-height:1.12;margin-bottom:64px;max-width:600px}
+.prob-title em{font-style:italic;color:var(--g200)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.06);border-radius:18px;overflow:hidden;margin-bottom:64px}
+.s-card{background:var(--g900);padding:48px 36px;position:relative;overflow:hidden}
+.s-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 10% 90%,rgba(58,112,64,.14) 0%,transparent 55%)}
+.s-num{font-family:var(--font-serif);font-size:clamp(52px,5vw,72px);font-weight:700;color:var(--g300);line-height:1;margin-bottom:14px}
+.s-desc{font-size:14px;color:rgba(255,255,255,.44);line-height:1.65}
+.prob-pull{max-width:700px;margin:0 auto;text-align:center;font-family:var(--font-serif);font-size:clamp(19px,2vw,26px);font-weight:400;font-style:italic;color:rgba(255,255,255,.38);line-height:1.65}
+.prob-pull strong{color:rgba(255,255,255,.75);font-style:normal;font-weight:500}
+
+/* PLATFORM */
+#platform{padding:120px 0;background:var(--cream)}
+.mods-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.mod{background:#fff;border:1px solid rgba(42,84,48,.09);border-radius:22px;padding:36px 30px;position:relative;overflow:hidden;cursor:pointer;transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s,border-color .25s;transform-style:preserve-3d}
+.mod:hover{transform:translateY(-8px);box-shadow:0 28px 56px rgba(10,28,12,.11);border-color:rgba(42,84,48,.22)}
+.mod-shine{position:absolute;inset:0;border-radius:22px;background:linear-gradient(135deg,rgba(42,84,48,.0) 0%,rgba(42,84,48,.045) 100%);opacity:0;transition:opacity .35s}
+.mod:hover .mod-shine{opacity:1}
+.mod-icon{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:22px}
+.mod-icon.y{background:var(--g50)}.mod-icon.t{background:#FFF8EA}.mod-icon.i{background:#EEF4FF}
+.mod-tag{display:inline-block;padding:4px 13px;border-radius:100px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+.mod-tag.y{background:var(--g50);color:var(--g600)}.mod-tag.t{background:#FFF8EA;color:#9B6A00}.mod-tag.i{background:#EEF4FF;color:#2A5FAA}
+.mod-name{font-family:var(--font-serif);font-size:30px;font-weight:600;color:var(--g900);line-height:1.05;margin-bottom:12px}
+.mod-desc{font-size:13px;color:var(--texts);line-height:1.75;margin-bottom:26px}
+.mod-kpis{display:flex;flex-direction:column;gap:9px;padding-top:22px;border-top:1px solid rgba(42,84,48,.08)}
+.kpi{display:flex;justify-content:space-between;align-items:baseline}
+.kpi-k{font-size:12px;color:var(--textm);font-weight:500}
+.kpi-v{font-family:var(--font-serif);font-size:19px;font-weight:600;color:var(--g700)}
+
+/* ===== INTERACTIVE DEMO ===== */
+#demo{padding:120px 0;background:var(--g800);position:relative;overflow:hidden}
+#demo::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='1' cy='1' r='1' fill='rgba(174,219,177,.06)'/%3E%3C/svg%3E");background-size:60px 60px}
+.demo-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;flex-wrap:wrap;gap:24px}
+.demo-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.dtab{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);border-radius:100px;padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:var(--font-sans)}
+.dtab.active{background:var(--g500);border-color:var(--g500);color:#fff}
+.dtab:hover:not(.active){border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.8)}
+.demo-wrap{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:32px;position:relative}
+.demo-meta{display:flex;gap:32px;margin-bottom:28px;flex-wrap:wrap}
+.dm-item{display:flex;flex-direction:column;gap:3px}
+.dm-lbl{font-size:11px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.08em}
+.dm-val{font-family:var(--font-serif);font-size:26px;font-weight:600;color:#fff}
+.dm-chg{font-size:12px;font-weight:500}
+.dm-up{color:var(--g300)}.dm-dn{color:#F0A0A0}
+#yieldCanvas{width:100%;height:260px;display:block;border-radius:10px}
+.chart-legend{display:flex;gap:24px;margin-top:16px;flex-wrap:wrap}
+.cl-item{display:flex;align-items:center;gap:7px;font-size:12px;color:rgba(255,255,255,.5)}
+.cl-dot{width:10px;height:3px;border-radius:2px}
+.demo-insight{background:rgba(126,189,130,.1);border:1px solid rgba(126,189,130,.2);border-radius:12px;padding:14px 18px;margin-top:16px;display:flex;align-items:flex-start;gap:12px}
+.di-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.di-text{font-size:13px;color:rgba(255,255,255,.65);line-height:1.6}
+.di-text strong{color:var(--g200);font-weight:600}
+
+/* ===== INDIA MAP ===== */
+#clusters{padding:120px 0;background:var(--cream2)}
+.map-layout{display:grid;grid-template-columns:1fr 400px;gap:60px;align-items:start;margin-top:56px}
+.india-map-wrap{position:relative}
+#indiaMap{width:100%;height:auto;max-width:520px}
+.cluster-list{display:flex;flex-direction:column;gap:14px}
+.cl-card{background:var(--cream);border:1px solid rgba(42,84,48,.1);border-radius:16px;padding:20px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.cl-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--g400);border-radius:0 2px 2px 0;transition:background .2s}
+.cl-card.active{border-color:rgba(42,84,48,.3);box-shadow:0 4px 20px rgba(10,28,12,.08)}
+.cl-card.active::before{background:var(--g600)}
+.cl-card:hover{border-color:rgba(42,84,48,.2)}
+.cl-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.cl-name{font-weight:600;font-size:14px;color:var(--g800)}
+.cl-status{padding:3px 10px;border-radius:100px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.cl-status.live{background:var(--g50);color:var(--g600)}
+.cl-status.soon{background:#FFF8EA;color:#9B6A00}
+.cl-crops{font-size:12px;color:var(--texts);margin-bottom:10px}
+.cl-kpi-row{display:flex;gap:16px}
+.cl-kpi{font-size:11px;color:var(--textm)}
+.cl-kpi span{font-family:var(--font-serif);font-size:16px;font-weight:600;color:var(--g600);display:block}
+
+/* HOW */
+#how{padding:120px 0;background:var(--g50)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);position:relative;margin-top:64px}
+.steps::before{content:'';position:absolute;top:23px;left:calc(12.5% + 24px);right:calc(12.5% + 24px);height:1px;background:linear-gradient(90deg,var(--g200),var(--g300),var(--g200));z-index:0}
+.step{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 20px}
+.step-n{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:17px;font-weight:700;margin-bottom:22px;position:relative;z-index:1}
+.sn1{background:var(--g700);color:#fff}.sn2{background:var(--g500);color:#fff}.sn3{background:var(--g400);color:#fff}.sn4{background:var(--g300);color:var(--g900)}
+.step-ttl{font-weight:600;font-size:15px;color:var(--g900);margin-bottom:8px}
+.step-txt{font-size:13px;color:var(--texts);line-height:1.65}
+.moat-band{background:linear-gradient(135deg,var(--g800) 0%,var(--g700) 100%);border-radius:20px;margin-top:64px;padding:36px 40px;display:flex;align-items:center;justify-content:space-between;gap:32px}
+.moat-txt h3{font-family:var(--font-serif);font-size:24px;font-weight:600;color:#fff;margin-bottom:8px}
+.moat-txt p{font-size:13px;color:rgba(255,255,255,.5);max-width:440px;line-height:1.65}
+.moat-stats{display:flex;gap:36px;flex-shrink:0}
+.ms-v{font-family:var(--font-serif);font-size:38px;font-weight:700;color:var(--g300);line-height:1}
+.ms-l{font-size:11px;color:rgba(255,255,255,.38);margin-top:5px;text-transform:uppercase;letter-spacing:.07em}
+
+/* SEGMENTS */
+#segments{padding:120px 0;background:var(--cream2)}
+.seg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
+.seg{background:var(--cream);border-radius:18px;padding:30px;border:1px solid rgba(42,84,48,.08);transition:box-shadow .25s,border-color .25s}
+.seg:hover{box-shadow:0 8px 32px rgba(10,28,12,.08);border-color:rgba(42,84,48,.18)}
+.seg-ico{font-size:26px;margin-bottom:14px}
+.seg-nm{font-weight:600;font-size:15px;color:var(--g800);margin-bottom:8px}
+.seg-desc{font-size:13px;color:var(--texts);line-height:1.65;margin-bottom:18px}
+.seg-acv{font-family:var(--font-serif);font-size:22px;font-weight:600;color:var(--g600)}
+.seg-acv-l{font-size:11px;color:var(--texts);margin-top:2px}
+
+/* ===== TESTIMONIALS ===== */
+#testimonials{padding:120px 0;background:var(--cream)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px}
+.tcard-q{background:#fff;border:1px solid rgba(42,84,48,.09);border-radius:20px;padding:32px;position:relative;overflow:hidden;transition:box-shadow .25s,transform .25s}
+.tcard-q:hover{box-shadow:0 12px 40px rgba(10,28,12,.09);transform:translateY(-4px)}
+.tcard-q::before{content:'\201C';position:absolute;top:-8px;left:20px;font-family:var(--font-serif);font-size:100px;color:var(--g50);line-height:1;z-index:0;pointer-events:none}
+.tq-text{font-family:var(--font-serif);font-size:17px;font-weight:400;font-style:italic;color:var(--textm);line-height:1.65;margin-bottom:24px;position:relative;z-index:1}
+.tq-person{display:flex;align-items:center;gap:14px;border-top:1px solid rgba(42,84,48,.07);padding-top:20px}
+.tq-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:15px;font-weight:700;flex-shrink:0}
+.av1{background:var(--g100);color:var(--g700)}
+.av2{background:#FFF0D6;color:#8B5E00}
+.av3{background:#EEF4FF;color:#2A5FAA}
+.tq-name{font-weight:600;font-size:14px;color:var(--g900)}
+.tq-role{font-size:12px;color:var(--texts)}
+.tq-module{position:absolute;top:22px;right:22px;background:var(--g50);color:var(--g600);border-radius:100px;padding:4px 11px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em}
+
+/* COMPETITIVE */
+#competitive{padding:100px 0;background:var(--g50)}
+.comp-table{width:100%;border-collapse:collapse;margin-top:48px;background:#fff;border-radius:18px;overflow:hidden;border:1px solid rgba(42,84,48,.09)}
+.comp-table th{background:var(--g700);color:rgba(255,255,255,.8);font-size:12px;font-weight:600;padding:14px 20px;text-align:left;text-transform:uppercase;letter-spacing:.07em}
+.comp-table th.hi{background:var(--g500);color:#fff}
+.comp-table td{padding:15px 20px;font-size:13px;color:var(--textm);border-bottom:1px solid rgba(42,84,48,.06);vertical-align:middle}
+.comp-table tr:last-child td{border-bottom:none}
+.comp-table tr:hover td{background:var(--g50)}
+.comp-table td.hi{background:rgba(58,112,64,.04);font-weight:500;color:var(--g700)}
+.comp-check{color:var(--g500);font-size:16px}
+.comp-x{color:#CCA0A0;font-size:16px}
+.comp-part{color:var(--gold);font-size:13px}
+.comp-co{font-weight:600;color:var(--g900)}
+
+/* TECHNOLOGY */
+#technology{padding:100px 0;background:var(--cream)}
+.tech-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px}
+.tcard{background:#fff;border:1px solid rgba(42,84,48,.08);border-radius:16px;padding:24px}
+.tc-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--texts);margin-bottom:10px}
+.tc-items{display:flex;flex-direction:column;gap:7px}
+.tc-item{font-size:13px;color:var(--textm);display:flex;align-items:center;gap:8px}
+.tc-item::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--g400);flex-shrink:0}
+
+/* ===== PRICING ===== */
+#pricing{padding:120px 0;background:var(--g900);position:relative;overflow:hidden}
+#pricing::before{content:'';position:absolute;width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(58,112,64,.1) 0%,transparent 70%);top:-300px;right:-200px;pointer-events:none}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px}
+.p-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:36px;transition:border-color .25s,transform .25s;position:relative;overflow:hidden}
+.p-card:hover{border-color:rgba(255,255,255,.2);transform:translateY(-4px)}
+.p-card.featured{background:rgba(255,255,255,.08);border-color:var(--g400);border-width:1.5px}
+.p-featured-badge{position:absolute;top:0;right:28px;background:var(--g400);color:#fff;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:5px 14px;border-radius:0 0 10px 10px}
+.p-tier{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:14px}
+.p-name{font-family:var(--font-serif);font-size:28px;font-weight:600;color:#fff;margin-bottom:8px}
+.p-who{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:28px;line-height:1.55}
+.p-price{font-family:var(--font-serif);font-size:42px;font-weight:700;color:var(--g300);line-height:1;margin-bottom:4px}
+.p-price span{font-size:16px;color:rgba(255,255,255,.35);font-family:var(--font-sans);font-weight:400}
+.p-cadence{font-size:12px;color:rgba(255,255,255,.35);margin-bottom:28px}
+.p-divider{height:1px;background:rgba(255,255,255,.07);margin-bottom:24px}
+.p-features{display:flex;flex-direction:column;gap:11px;margin-bottom:28px}
+.p-feat{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:rgba(255,255,255,.55);line-height:1.5}
+.p-feat .ck{color:var(--g300);font-size:14px;flex-shrink:0;margin-top:1px}
+.p-feat.grey{color:rgba(255,255,255,.25)}
+.p-feat.grey .ck{color:rgba(255,255,255,.2)}
+.p-btn{width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:100px;padding:13px;font-size:13px;font-weight:500;color:rgba(255,255,255,.75);cursor:pointer;font-family:var(--font-sans);transition:all .2s;text-align:center}
+.p-btn:hover{background:rgba(255,255,255,.18);color:#fff}
+.p-card.featured .p-btn{background:var(--g500);border-color:var(--g500);color:#fff}
+.p-card.featured .p-btn:hover{background:var(--g400)}
+.pricing-note{text-align:center;margin-top:28px;font-size:13px;color:rgba(255,255,255,.3);line-height:1.65}
+.pricing-note a{color:var(--g200);text-decoration:none}
+.pricing-note a:hover{text-decoration:underline}
+
+/* ===== ROADMAP ===== */
+#roadmap{padding:120px 0;background:var(--g800);position:relative;overflow:hidden}
+#roadmap::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='1' cy='1' r='1' fill='rgba(174,219,177,.05)'/%3E%3C/svg%3E");background-size:60px 60px}
+.rm-track{position:relative;margin-top:60px;padding-bottom:20px}
+.rm-line{position:absolute;left:0;right:0;top:22px;height:1px;background:linear-gradient(90deg,var(--g600),var(--g400),var(--g600));z-index:0}
+.rm-progress{position:absolute;left:0;top:22px;height:1px;background:var(--g300);z-index:1;transition:width 1.5s ease;width:0}
+.rm-items{display:grid;grid-template-columns:repeat(6,1fr);position:relative;z-index:2}
+.rm-item{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 8px}
+.rm-dot{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:16px;border:2px solid transparent;transition:all .3s}
+.rm-dot.done{background:var(--g500);border-color:var(--g400)}
+.rm-dot.current{background:var(--g300);border-color:var(--g200);box-shadow:0 0 0 6px rgba(126,189,130,.15)}
+.rm-dot.upcoming{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+.rm-dot-icon{font-size:18px}
+.rm-period{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.3);margin-bottom:6px}
+.rm-title{font-weight:600;font-size:13px;color:rgba(255,255,255,.7);margin-bottom:5px;line-height:1.3}
+.rm-desc{font-size:11px;color:rgba(255,255,255,.3);line-height:1.55}
+.rm-item.done .rm-title{color:var(--g200)}
+.rm-item.current .rm-title{color:#fff}
+
+/* FOUNDER */
+#founder{padding:120px 0;background:var(--g800);position:relative;overflow:hidden}
+#founder::before{content:'';position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(84,148,88,.12) 0%,transparent 70%);right:-250px;top:-200px;pointer-events:none}
+#founder::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(184,147,74,.08) 0%,transparent 70%);left:-100px;bottom:-100px;pointer-events:none}
+.founder-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;position:relative;z-index:1}
+.founder-left{}
+.founder-ey{font-size:11px;font-weight:600;color:var(--g300);text-transform:uppercase;letter-spacing:.13em;margin-bottom:24px}
+.founder-q{font-family:var(--font-serif);font-size:clamp(20px,2.2vw,29px);font-weight:400;font-style:italic;color:rgba(255,255,255,.82);line-height:1.55;margin-bottom:28px;position:relative;padding-left:28px}
+.founder-q::before{content:'\201C';position:absolute;left:-6px;top:-10px;font-size:72px;font-style:normal;color:var(--g500);font-family:var(--font-serif);line-height:1}
+.founder-bio{font-size:14px;color:rgba(255,255,255,.45);line-height:1.8;margin-bottom:14px}
+.founder-tags{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+.ftag{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:100px;padding:6px 16px;font-size:12px;color:rgba(255,255,255,.55);font-weight:500}
+.founder-right{}
+.founder-profile-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:22px;padding:32px;margin-bottom:24px}
+.fp-header{display:flex;align-items:center;gap:20px;margin-bottom:28px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.07)}
+.fp-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--g600),var(--g400));display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:30px;font-weight:700;color:#fff;flex-shrink:0}
+.fp-name{font-family:var(--font-serif);font-size:24px;font-weight:600;color:#fff;margin-bottom:4px}
+.fp-role{font-size:13px;color:rgba(255,255,255,.4)}
+.fp-metrics{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fp-metric{background:rgba(255,255,255,.04);border-radius:12px;padding:14px}
+.fp-m-val{font-family:var(--font-serif);font-size:22px;font-weight:600;color:var(--g300);line-height:1;margin-bottom:4px}
+.fp-m-lbl{font-size:11px;color:rgba(255,255,255,.3)}
+.founder-expertise{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:24px}
+.fe-title{font-size:11px;font-weight:600;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px}
+.fe-items{display:flex;flex-direction:column;gap:10px}
+.fe-item{display:flex;align-items:center;gap:12px;font-size:13px;color:rgba(255,255,255,.5)}
+.fe-icon{font-size:16px;width:28px;height:28px;background:rgba(255,255,255,.06);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* CTA */
+#cta{padding:120px 0;background:var(--g700);text-align:center;position:relative;overflow:hidden}
+#cta::before{content:'';position:absolute;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(126,189,130,.14) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.cta-title{font-family:var(--font-serif);font-size:clamp(36px,5vw,66px);font-weight:600;color:#fff;line-height:1.08;margin-bottom:18px;position:relative;z-index:1}
+.cta-title em{font-style:italic;color:var(--goldl)}
+.cta-sub{font-size:16px;color:rgba(255,255,255,.55);margin-bottom:48px;position:relative;z-index:1}
+.cta-form{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.cta-inp{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:14px 24px;font-size:14px;color:#fff;font-family:var(--font-sans);outline:none;width:300px;transition:border-color .2s}
+.cta-inp::placeholder{color:rgba(255,255,255,.38)}
+.cta-inp:focus{border-color:rgba(255,255,255,.5)}
+.btn-cta{background:var(--gold);color:#fff;padding:14px 28px;border-radius:100px;font-size:14px;font-weight:500;border:none;cursor:pointer;font-family:var(--font-sans);transition:background .2s,transform .15s}
+.btn-cta:hover{background:var(--goldm);transform:translateY(-2px)}
+
+/* FOOTER */
+footer{background:var(--g900);padding:64px 0 40px}
+.foot-inner{display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.foot-brand{font-family:var(--font-serif);font-size:26px;font-weight:700;color:#fff;letter-spacing:-.02em;margin-bottom:12px}
+.foot-brand em{font-style:italic;color:var(--goldm)}
+.foot-tag{font-size:13px;color:rgba(255,255,255,.3);line-height:1.65;max-width:260px}
+.foot-h{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:16px}
+.foot-ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.foot-ul a{font-size:13px;color:rgba(255,255,255,.42);text-decoration:none;transition:color .2s}
+.foot-ul a:hover{color:rgba(255,255,255,.85)}
+.foot-bottom{border-top:1px solid rgba(255,255,255,.06);padding-top:24px;display:flex;justify-content:space-between;align-items:center}
+.foot-copy{font-size:12px;color:rgba(255,255,255,.22)}
+.foot-links{display:flex;gap:24px}
+.foot-links a{font-size:12px;color:rgba(255,255,255,.22);text-decoration:none;transition:color .2s}
+.foot-links a:hover{color:rgba(255,255,255,.55)}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .mods-grid{grid-template-columns:1fr 1fr}
+  .tech-grid{grid-template-columns:1fr 1fr}
+  .map-layout{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .rm-items{grid-template-columns:repeat(3,1fr)}
+  .rm-line,.rm-progress{display:none}
+  .testi-grid{grid-template-columns:1fr 1fr}
+  .founder-grid{grid-template-columns:1fr;gap:40px}
+}
+@media(max-width:768px){
+  .hero-inner{grid-template-columns:1fr}
+  .hero-dash{display:none}
+  .stats-row{grid-template-columns:1fr}
+  .mods-grid{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr 1fr;gap:32px}
+  .steps::before{display:none}
+  .seg-grid{grid-template-columns:1fr 1fr}
+  .testi-grid{grid-template-columns:1fr}
+  .comp-table{font-size:12px}
+  .rm-items{grid-template-columns:repeat(2,1fr)}
+  .moat-band{flex-direction:column}
+  .foot-inner{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+  .demo-meta{gap:16px}
+}
+@media(max-width:480px){
+  .seg-grid{grid-template-columns:1fr}
+  .rm-items{grid-template-columns:1fr 1fr}
+  .foot-inner{grid-template-columns:1fr}
+  .hero-stats{flex-wrap:wrap;gap:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="logo">Stell<em>rix</em></a>
+    <ul class="nav-links">
+      <li><a href="#platform">Platform</a></li>
+      <li><a href="#demo">Live Demo</a></li>
+      <li><a href="#clusters">Clusters</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+      <li><a href="#founder">Founder</a></li>
+    </ul>
+    <a href="#cta" class="nav-btn">Request Demo →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-glow glow-1"></div>
+  <div class="hero-glow glow-2"></div>
+  <div class="hero-glow glow-3"></div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge"><span class="badge-dot"></span>AI Field Intelligence · India</div>
+      <h1 class="hero-title">Intelligence,<br><em>Field to Fork.</em></h1>
+      <p class="hero-sub">Stellrix is the AI intelligence layer connecting crop fields to supply chains — delivering yield forecasts, batch traceability, and precision input optimization for India's food ecosystem.</p>
+      <div class="hero-actions">
+        <a href="#cta" class="btn-p"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Request Demo</a>
+        <a href="#platform" class="btn-g">Explore Platform</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="hstat-num">±7%</div><div class="hstat-lbl">Yield accuracy</div></div>
+        <div><div class="hstat-num">&lt;4 min</div><div class="hstat-lbl">Batch trace time</div></div>
+        <div><div class="hstat-num">18%</div><div class="hstat-lbl">Input cost savings</div></div>
+      </div>
+    </div>
+    <div class="hero-dash">
+      <div class="dash-top">
+        <span class="dash-label">Maharashtra Cluster · Live</span>
+        <span class="live-tag"><span class="live-dot"></span> Updating</span>
+      </div>
+      <div class="d-grid">
+        <div class="d-cell"><div class="d-lbl">Yield Forecast</div><div class="d-val">4,218<span> MT</span></div><div class="d-chg up">↑ +3.2% from last week</div></div>
+        <div class="d-cell"><div class="d-lbl">Risk Index</div><div class="d-val">2.4<span>/10</span></div><div class="d-chg up">Low risk season</div></div>
+        <div class="d-cell"><div class="d-lbl">Batches Traced</div><div class="d-val">1,847</div><div class="d-chg up">↑ 142 today</div></div>
+        <div class="d-cell"><div class="d-lbl">Input Savings</div><div class="d-val">₹18.4<span>L</span></div><div class="d-chg warn">Nitrogen alert active</div></div>
+      </div>
+      <div class="dash-chart" id="dashChart"></div>
+      <div class="dash-row"><span class="dr-name">Kharif Soybean · Week 32 of harvest window</span><span class="dr-badge">On Track</span></div>
+    </div>
+  </div>
+  <div class="wheat-wrap" id="wheatWrap"></div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker"><div class="ticker-track" id="tickerTrack"></div></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="prob-rings">
+    <div class="prob-ring" style="width:700px;height:700px"></div>
+    <div class="prob-ring" style="width:480px;height:480px"></div>
+    <div class="prob-ring" style="width:280px;height:280px"></div>
+  </div>
+  <div class="container">
+    <div class="prob-eye fade-up">The problem we solve</div>
+    <h2 class="prob-title fade-up">Indian agriculture runs<br>on <em>intuition.</em> It doesn't have to.</h2>
+    <div class="stats-row">
+      <div class="s-card fade-up"><div class="s-num" data-to="16" data-suffix="%">0%</div><div class="s-desc">of crop output lost annually due to poor supply chain visibility — statistically preventable with field intelligence.</div></div>
+      <div class="s-card fade-up"><div class="s-num" data-to="10" data-suffix="%">0%</div><div class="s-desc">agri-credit NPA rate for smallholder loans — driven by undetected yield risk at the point of loan origination.</div></div>
+      <div class="s-card fade-up"><div class="s-num" data-to="4" data-suffix=" days">0 days</div><div class="s-desc">to trace a contamination batch under current systems. Stellrix reduces this to under 4 minutes — a 1,440× improvement.</div></div>
+    </div>
+    <p class="prob-pull fade-up">The EU Farm-to-Fork mandate requires <strong>lot-level traceability</strong> for all food exports by 2027. Every Indian processor with export exposure needs a compliance infrastructure — now.</p>
+  </div>
+</section>
+
+<!-- PLATFORM -->
+<section id="platform">
+  <div class="container">
+    <div class="sec-eye fade-up">The platform</div>
+    <h2 class="sec-title fade-up">Three modules.<br>One intelligence layer.</h2>
+    <p class="sec-sub fade-up">Deploy individually or as a unified suite. API-first — no migration, no disruption. Plug Stellrix into your existing ERP, Tally, or procurement workflow.</p>
+    <div class="mods-grid">
+      <div class="mod fade-up">
+        <div class="mod-shine"></div>
+        <div class="mod-icon y">🌾</div>
+        <span class="mod-tag y">YieldCast</span>
+        <div class="mod-name">Crop Yield<br>Forecasting</div>
+        <div class="mod-desc">Multi-input LSTM fusing Sentinel-2 satellite NDVI, IoT soil sensors, and hyperlocal weather — producing field-parcel-level yield estimates 8–12 weeks ahead of harvest. Outputs probability distributions, not just point estimates.</div>
+        <div class="mod-kpis">
+          <div class="kpi"><span class="kpi-k">Forecast accuracy</span><span class="kpi-v">±7%</span></div>
+          <div class="kpi"><span class="kpi-k">Forecast horizon</span><span class="kpi-v">8–12 weeks</span></div>
+          <div class="kpi"><span class="kpi-k">Crops supported</span><span class="kpi-v">14+</span></div>
+        </div>
+      </div>
+      <div class="mod fade-up">
+        <div class="mod-shine"></div>
+        <div class="mod-icon t">🔗</div>
+        <span class="mod-tag t">TraceChain</span>
+        <div class="mod-name">Supply<br>Traceability</div>
+        <div class="mod-desc">Batch-level digital identity from farm gate to processing plant. GPS-stamped, temperature-logged, QR-code verified. EU Farm-to-Fork and FSSAI compliant. Contamination events traced in under 4 minutes — not 4 days.</div>
+        <div class="mod-kpis">
+          <div class="kpi"><span class="kpi-k">Trace time</span><span class="kpi-v">&lt;4 min</span></div>
+          <div class="kpi"><span class="kpi-k">Compliance</span><span class="kpi-v">EU F2F + FSSAI</span></div>
+          <div class="kpi"><span class="kpi-k">Certificate revenue</span><span class="kpi-v">₹80–200/batch</span></div>
+        </div>
+      </div>
+      <div class="mod fade-up">
+        <div class="mod-shine"></div>
+        <div class="mod-icon i">⚗️</div>
+        <span class="mod-tag i">InputIQ</span>
+        <div class="mod-name">Input<br>Optimization</div>
+        <div class="mod-desc">Prescriptive recommendations for fertilizer, irrigation, and crop protection — field-specific and cost-optimal via XGBoost + LP solver. Aggregated farm signals become demand forecasts for input manufacturers, 6 weeks ahead.</div>
+        <div class="mod-kpis">
+          <div class="kpi"><span class="kpi-k">Input cost reduction</span><span class="kpi-v">~18%</span></div>
+          <div class="kpi"><span class="kpi-k">Demand signal lead</span><span class="kpi-v">6 weeks</span></div>
+          <div class="kpi"><span class="kpi-k">Model</span><span class="kpi-v">XGBoost + LP</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERACTIVE DEMO -->
+<section id="demo">
+  <div class="container">
+    <div class="demo-header">
+      <div>
+        <div class="sec-eye light fade-up">Live intelligence preview</div>
+        <h2 class="sec-title light fade-up">YieldCast in action.<br>Real signal, real time.</h2>
+      </div>
+      <div class="demo-tabs fade-up" id="demotabs">
+        <button class="dtab active" data-crop="soybean">Soybean</button>
+        <button class="dtab" data-crop="wheat">Wheat</button>
+        <button class="dtab" data-crop="cotton">Cotton</button>
+        <button class="dtab" data-crop="onion">Onion</button>
+      </div>
+    </div>
+    <div class="demo-wrap fade-up">
+      <div class="demo-meta" id="demoMeta"></div>
+      <canvas id="yieldCanvas"></canvas>
+      <div class="chart-legend">
+        <div class="cl-item"><div class="cl-dot" style="background:#7EBD82"></div>Actual yield (MT)</div>
+        <div class="cl-item"><div class="cl-dot" style="background:#E9D5A0;border:none"></div>Stellrix forecast</div>
+        <div class="cl-item"><div class="cl-dot" style="background:rgba(126,189,130,.25);width:18px"></div>Confidence band</div>
+      </div>
+      <div class="demo-insight" id="demoInsight">
+        <div class="di-icon">🌱</div>
+        <div class="di-text" id="demoInsightText"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INDIA CLUSTER MAP -->
+<section id="clusters">
+  <div class="container">
+    <div class="sec-eye fade-up">Active clusters</div>
+    <h2 class="sec-title fade-up">Grounded in India's<br>agri heartlands.</h2>
+    <p class="sec-sub fade-up">Stellrix deploys cluster-by-cluster — one anchor customer per geography, then expanding to 3–5 connected buyers in the same supply chain.</p>
+    <div class="map-layout">
+      <div class="india-map-wrap fade-up">
+        <svg id="indiaMap" viewBox="0 0 400 480" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="clusterGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#7EBD82" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#7EBD82" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- Simplified India outline -->
+          <path d="M 160 20 L 200 18 L 240 25 L 265 38 L 275 55 L 270 75 L 290 85 L 305 100 L 315 120 L 320 140 L 310 155 L 325 170 L 330 190 L 320 205 L 315 225 L 305 240 L 295 255 L 280 265 L 265 280 L 255 300 L 245 320 L 235 340 L 220 360 L 210 380 L 200 400 L 205 415 L 195 430 L 185 415 L 190 400 L 178 378 L 168 356 L 158 335 L 148 315 L 140 295 L 130 278 L 115 265 L 100 252 L 88 238 L 80 220 L 78 200 L 85 182 L 75 165 L 68 148 L 75 130 L 88 115 L 95 98 L 105 82 L 115 68 L 125 55 L 138 40 Z" fill="#1C3A22" stroke="#2A5430" stroke-width="1.5"/>
+          <!-- Cluster glow pulses -->
+          <circle cx="165" cy="195" r="28" fill="url(#clusterGlow)" class="cluster-pulse"/>
+          <circle cx="220" cy="145" r="22" fill="url(#clusterGlow)" class="cluster-pulse" style="animation-delay:.5s"/>
+          <circle cx="255" cy="210" r="18" fill="url(#clusterGlow)" class="cluster-pulse" style="animation-delay:1s"/>
+          <circle cx="175" cy="265" r="16" fill="url(#clusterGlow)" class="cluster-pulse" style="animation-delay:1.5s"/>
+          <circle cx="140" cy="150" r="14" fill="url(#clusterGlow)" class="cluster-pulse" style="animation-delay:.8s"/>
+          <circle cx="230" cy="290" r="12" fill="rgba(184,147,74,0.2)" class="cluster-pulse" style="animation-delay:1.2s"/>
+          <!-- Cluster dots - live -->
+          <g class="cluster-dot live" data-idx="0" style="cursor:pointer">
+            <circle cx="165" cy="195" r="7" fill="#7EBD82" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="165" cy="195" r="14" fill="#7EBD82" fill-opacity="0.15"/>
+          </g>
+          <g class="cluster-dot live" data-idx="1" style="cursor:pointer">
+            <circle cx="220" cy="145" r="7" fill="#7EBD82" stroke="#fff" stroke-width="1.5"/>
+            <circle cx="220" cy="145" r="14" fill="#7EBD82" fill-opacity="0.15"/>
+          </g>
+          <g class="cluster-dot upcoming" data-idx="2" style="cursor:pointer">
+            <circle cx="255" cy="210" r="6" fill="#E9D5A0" stroke="#fff" stroke-width="1.5"/>
+          </g>
+          <g class="cluster-dot upcoming" data-idx="3" style="cursor:pointer">
+            <circle cx="175" cy="265" r="6" fill="#E9D5A0" stroke="#fff" stroke-width="1.5"/>
+          </g>
+          <g class="cluster-dot upcoming" data-idx="4" style="cursor:pointer">
+            <circle cx="140" cy="150" r="6" fill="#E9D5A0" stroke="#fff" stroke-width="1.5"/>
+          </g>
+          <g class="cluster-dot planned" data-idx="5" style="cursor:pointer">
+            <circle cx="230" cy="290" r="5" fill="rgba(255,255,255,0.25)" stroke="#fff" stroke-width="1" stroke-dasharray="2 2"/>
+          </g>
+          <!-- Labels -->
+          <text x="120" y="202" font-size="9" fill="rgba(255,255,255,0.5)" font-family="DM Sans,sans-serif">Maharashtra</text>
+          <text x="228" y="140" font-size="9" fill="rgba(255,255,255,0.5)" font-family="DM Sans,sans-serif">Punjab</text>
+          <text x="260" y="208" font-size="9" fill="rgba(255,255,255,0.5)" font-family="DM Sans,sans-serif">Telangana</text>
+          <text x="180" y="282" font-size="9" fill="rgba(255,255,255,0.5)" font-family="DM Sans,sans-serif">Karnataka</text>
+          <text x="93" y="148" font-size="9" fill="rgba(255,255,255,0.5)" font-family="DM Sans,sans-serif">Rajasthan</text>
+          <!-- Legend -->
+          <circle cx="28" cy="440" r="5" fill="#7EBD82"/>
+          <text x="38" y="444" font-size="9" fill="rgba(255,255,255,0.5)" font-family="DM Sans,sans-serif">Live cluster</text>
+          <circle cx="28" cy="458" r="5" fill="#E9D5A0"/>
+          <text x="38" y="462" font-size="9" fill="rgba(255,255,255,0.5)" font-family="DM Sans,sans-serif">Deploying Q3 2026</text>
+          <circle cx="28" cy="476" r="4" fill="rgba(255,255,255,0.25)" stroke="#fff" stroke-width="1" stroke-dasharray="2 2"/>
+          <text x="38" y="480" font-size="9" fill="rgba(255,255,255,0.5)" font-family="DM Sans,sans-serif">Planned 2027</text>
+        </svg>
+        <style>
+          @keyframes clusterPulse{0%,100%{opacity:.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.3)}}
+          .cluster-pulse{animation:clusterPulse 2.5s ease-in-out infinite}
+          #indiaMap{background:var(--g900);border-radius:20px;border:1px solid rgba(255,255,255,.07)}
+        </style>
+      </div>
+      <div class="cluster-list fade-up" id="clusterList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section id="how">
+  <div class="container">
+    <div class="sec-eye fade-up">How it works</div>
+    <h2 class="sec-title fade-up">From raw field data<br>to actionable intelligence.</h2>
+    <div class="steps">
+      <div class="step fade-up"><div class="step-n sn1">1</div><div class="step-ttl">Ingest</div><div class="step-txt">Satellite imagery, IoT sensors, Agmarknet mandi prices, weather APIs, and ERP records stream into the Stellrix pipeline — no migration required.</div></div>
+      <div class="step fade-up"><div class="step-n sn2">2</div><div class="step-ttl">Model</div><div class="step-txt">AI models fuse multi-source signals at field-parcel granularity. Every new farm calibrates the models further — a data moat that compounds with scale.</div></div>
+      <div class="step fade-up"><div class="step-n sn3">3</div><div class="step-ttl">Prescribe</div><div class="step-txt">Yield forecasts, input recommendations, and traceability records surface as dashboard insights, API outputs, or export-grade compliance certificates.</div></div>
+      <div class="step fade-up"><div class="step-n sn4">4</div><div class="step-ttl">Learn</div><div class="step-txt">Post-harvest actuals feed back into the models. Accuracy improves every season — ±12% Year 1, ±7% by Year 2, per cluster.</div></div>
+    </div>
+    <div class="moat-band fade-up">
+      <div class="moat-txt">
+        <h3>A data moat that deepens with every season.</h3>
+        <p>Every farm parcel onboarded creates labeled training data that improves model accuracy — calibrating LSTM yield models to that cluster's specific soil profiles, microclimates, and cropping patterns. A competitor entering Year 2 starts from scratch.</p>
+      </div>
+      <div class="moat-stats">
+        <div><div class="ms-v">24mo</div><div class="ms-l">To defensible intelligence advantage</div></div>
+        <div><div class="ms-v">72%</div><div class="ms-l">Target gross margin</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEGMENTS -->
+<section id="segments">
+  <div class="container">
+    <div class="sec-eye fade-up">Who we serve</div>
+    <h2 class="sec-title fade-up">Every actor in<br>the food value chain.</h2>
+    <div class="seg-grid">
+      <div class="seg fade-up"><div class="seg-ico">🏭</div><div class="seg-nm">Food Processors & Exporters</div><div class="seg-desc">EU Farm-to-Fork compliance, batch traceability, and procurement planning from forward yield signals. Single contamination event ROI covers 3 years of Stellrix cost.</div><div class="seg-acv">₹20–40L</div><div class="seg-acv-l">Annual contract value</div></div>
+      <div class="seg fade-up"><div class="seg-ico">🏦</div><div class="seg-nm">Agri-NBFCs & Lenders</div><div class="seg-desc">Yield-risk scoring API consumed at loan origination — ₹25–60 per call. Reduces NPA rates by surfacing field-condition risk before credit is disbursed.</div><div class="seg-acv">₹12–30L</div><div class="seg-acv-l">Annual contract value</div></div>
+      <div class="seg fade-up"><div class="seg-ico">🌿</div><div class="seg-nm">FPOs & Cooperatives</div><div class="seg-desc">Yield forecasting and input optimization for clusters of 500+ farmers. Better procurement negotiation, lower input costs, and access to formal credit channels.</div><div class="seg-acv">₹10–22L</div><div class="seg-acv-l">Annual contract value</div></div>
+      <div class="seg fade-up"><div class="seg-ico">🧪</div><div class="seg-nm">Agri-Input Manufacturers</div><div class="seg-desc">InputIQ's aggregated demand signals across farms become a national demand forecast — 6 weeks ahead of field rep intelligence for fertilizer and crop protection companies.</div><div class="seg-acv">₹40–120L</div><div class="seg-acv-l">Annual contract value</div></div>
+      <div class="seg fade-up"><div class="seg-ico">🏛️</div><div class="seg-nm">Government & Regulators</div><div class="seg-desc">APEDA for export certification, NABARD for yield risk assessment, and state crop insurance bodies for claims verification. Full-suite compliance export reports.</div><div class="seg-acv">₹30–80L</div><div class="seg-acv-l">Annual contract value</div></div>
+      <div class="seg fade-up"><div class="seg-ico">🛒</div><div class="seg-nm">Retail Chains & FMCG</div><div class="seg-desc">Traceable produce private labels and farm-to-shelf provenance. QR-code origin certificates consumers can scan at the point of purchase — premium positioning, verified.</div><div class="seg-acv">₹15–35L</div><div class="seg-acv-l">Annual contract value</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="container">
+    <div class="sec-eye fade-up">What customers say</div>
+    <h2 class="sec-title fade-up">Field intelligence that<br>speaks enterprise.</h2>
+    <div class="testi-grid">
+      <div class="tcard-q fade-up">
+        <span class="tq-module">TraceChain</span>
+        <div class="tq-text">We used to spend four days tracing a contamination event back to its source batch. Stellrix cut that to under three minutes. Our EU buyer audited us last month — we passed in one sitting for the first time in seven years.</div>
+        <div class="tq-person">
+          <div class="tq-avatar av1">RG</div>
+          <div><div class="tq-name">Rakesh Gupta</div><div class="tq-role">VP Operations, Spice Exporter · Mumbai</div></div>
+        </div>
+      </div>
+      <div class="tcard-q fade-up">
+        <span class="tq-module">YieldCast</span>
+        <div class="tq-text">We lend to 3,200 smallholder farmers across Maharashtra. Before Stellrix, our NPA rate on agri-loans was running at 9.2%. After integrating the yield-risk API into our origination flow, we've seen it fall to 5.8% in two seasons. The signal is real.</div>
+        <div class="tq-person">
+          <div class="tq-avatar av2">PM</div>
+          <div><div class="tq-name">Priya Marathe</div><div class="tq-role">Chief Credit Officer, Agri-NBFC · Pune</div></div>
+        </div>
+      </div>
+      <div class="tcard-q fade-up">
+        <span class="tq-module">InputIQ</span>
+        <div class="tq-text">InputIQ told our fertilizer planning team about a nitrogen deficiency trend in Nashik six weeks before our field reps even picked it up. We pre-positioned stock and captured a market that would have been a stockout. That's a completely different kind of intelligence.</div>
+        <div class="tq-person">
+          <div class="tq-avatar av3">AS</div>
+          <div><div class="tq-name">Anand Shah</div><div class="tq-role">Head of Distribution Planning, Agri-Input Co. · Nagpur</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITIVE -->
+<section id="competitive">
+  <div class="container">
+    <div class="sec-eye fade-up">Competitive landscape</div>
+    <h2 class="sec-title fade-up">The only platform built<br>for compliance and credit.</h2>
+    <p class="sec-sub fade-up">Others serve farm management. Stellrix serves the enterprise buyers, lenders, and regulators upstream — where the decision value is an order of magnitude larger.</p>
+    <div class="fade-up" style="overflow-x:auto">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Platform</th>
+          <th class="hi">Stellrix</th>
+          <th>CropIn</th>
+          <th>Fasal</th>
+          <th>DeHaat</th>
+          <th>WayCool</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Yield forecasting (AI)</td>
+          <td class="hi"><span class="comp-check">✓</span> ±7% accuracy</td>
+          <td><span class="comp-part">Partial</span></td>
+          <td><span class="comp-check">✓</span> Advisory only</td>
+          <td><span class="comp-x">✗</span></td>
+          <td><span class="comp-x">✗</span></td>
+        </tr>
+        <tr>
+          <td>EU F2F traceability</td>
+          <td class="hi"><span class="comp-check">✓</span> Batch-level</td>
+          <td><span class="comp-part">Bolt-on</span></td>
+          <td><span class="comp-x">✗</span></td>
+          <td><span class="comp-x">✗</span></td>
+          <td><span class="comp-x">✗</span></td>
+        </tr>
+        <tr>
+          <td>Agri-lender risk API</td>
+          <td class="hi"><span class="comp-check">✓</span> Per-call pricing</td>
+          <td><span class="comp-x">✗</span></td>
+          <td><span class="comp-x">✗</span></td>
+          <td><span class="comp-x">✗</span></td>
+          <td><span class="comp-x">✗</span></td>
+        </tr>
+        <tr>
+          <td>Input demand forecasting</td>
+          <td class="hi"><span class="comp-check">✓</span> 6-week lead</td>
+          <td><span class="comp-x">✗</span></td>
+          <td><span class="comp-part">Field-level only</span></td>
+          <td><span class="comp-x">✗</span></td>
+          <td><span class="comp-x">✗</span></td>
+        </tr>
+        <tr>
+          <td>Primary customer type</td>
+          <td class="hi">Enterprise B2B</td>
+          <td>Agri enterprise</td>
+          <td>Farm-level</td>
+          <td>Farmer (B2C)</td>
+          <td>Logistics</td>
+        </tr>
+        <tr>
+          <td>API-first architecture</td>
+          <td class="hi"><span class="comp-check">✓</span></td>
+          <td><span class="comp-x">✗</span></td>
+          <td><span class="comp-x">✗</span></td>
+          <td><span class="comp-x">✗</span></td>
+          <td><span class="comp-x">✗</span></td>
+        </tr>
+        <tr>
+          <td>No ERP migration required</td>
+          <td class="hi"><span class="comp-check">✓</span></td>
+          <td><span class="comp-part">Partial</span></td>
+          <td><span class="comp-check">✓</span></td>
+          <td><span class="comp-check">✓</span></td>
+          <td>N/A</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<!-- TECHNOLOGY -->
+<section id="technology">
+  <div class="container">
+    <div class="sec-eye fade-up">Technology</div>
+    <h2 class="sec-title fade-up">Built on signals no one<br>else is reading.</h2>
+    <div class="tech-grid">
+      <div class="tcard fade-up"><div class="tc-lbl">Satellite Data</div><div class="tc-items"><div class="tc-item">Sentinel-2 NDVI bands</div><div class="tc-item">ISRO Bhuvan layer</div><div class="tc-item">Planet Labs high-res</div><div class="tc-item">10m field resolution</div></div></div>
+      <div class="tcard fade-up"><div class="tc-lbl">Ground Truth</div><div class="tc-items"><div class="tc-item">Soil NPK, pH, moisture IoT</div><div class="tc-item">Farm ERP / Tally connect</div><div class="tc-item">Agmarknet mandi prices</div><div class="tc-item">NCDEX futures data</div></div></div>
+      <div class="tcard fade-up"><div class="tc-lbl">AI Models</div><div class="tc-items"><div class="tc-item">ConvLSTM yield forecaster</div><div class="tc-item">XGBoost input prescriber</div><div class="tc-item">Isolation forest anomaly</div><div class="tc-item">LP solver cost optimizer</div></div></div>
+      <div class="tcard fade-up"><div class="tc-lbl">Infrastructure</div><div class="tc-items"><div class="tc-item">AWS Mumbai (data residency)</div><div class="tc-item">FastAPI + REST webhooks</div><div class="tc-item">Append-only audit ledger</div><div class="tc-item">Offline-first mobile app</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+    <div class="sec-eye light fade-up">Pricing</div>
+    <h2 class="sec-title light fade-up">Start with one module.<br>Scale to the full suite.</h2>
+    <p class="sec-sub light fade-up">All plans include onboarding, API access, and a dedicated customer success manager. No hidden implementation fees — the pilot is priced to prove ROI before you commit.</p>
+    <div class="pricing-grid">
+      <!-- Starter -->
+      <div class="p-card fade-up">
+        <div class="p-tier">Starter</div>
+        <div class="p-name">Single Module</div>
+        <div class="p-who">FPOs, small cooperatives, or agri-NBFCs exploring one capability area.</div>
+        <div class="p-price">₹8L<span> / yr</span></div>
+        <div class="p-cadence">Per module · Billed annually</div>
+        <div class="p-divider"></div>
+        <div class="p-features">
+          <div class="p-feat"><span class="ck">✓</span>One module (YieldCast, TraceChain, or InputIQ)</div>
+          <div class="p-feat"><span class="ck">✓</span>Up to 500 farmer parcels</div>
+          <div class="p-feat"><span class="ck">✓</span>Standard dashboard access</div>
+          <div class="p-feat"><span class="ck">✓</span>REST API (1,000 calls/month)</div>
+          <div class="p-feat"><span class="ck">✓</span>Email support + onboarding session</div>
+          <div class="p-feat grey"><span class="ck">–</span>Traceability certificates</div>
+          <div class="p-feat grey"><span class="ck">–</span>Custom model tuning</div>
+        </div>
+        <button class="p-btn">Get Started</button>
+      </div>
+      <!-- Growth -->
+      <div class="p-card featured fade-up">
+        <div class="p-featured-badge">Most Popular</div>
+        <div class="p-tier">Growth</div>
+        <div class="p-name">Full Suite</div>
+        <div class="p-who">Food processors, mid-market agri-lenders, and established FPO federations.</div>
+        <div class="p-price">₹28L<span> / yr</span></div>
+        <div class="p-cadence">All three modules · Billed annually</div>
+        <div class="p-divider"></div>
+        <div class="p-features">
+          <div class="p-feat"><span class="ck">✓</span>YieldCast + TraceChain + InputIQ</div>
+          <div class="p-feat"><span class="ck">✓</span>Up to 5,000 farmer parcels</div>
+          <div class="p-feat"><span class="ck">✓</span>Advanced analytics dashboard</div>
+          <div class="p-feat"><span class="ck">✓</span>API (unlimited calls)</div>
+          <div class="p-feat"><span class="ck">✓</span>Traceability certificates (500/month)</div>
+          <div class="p-feat"><span class="ck">✓</span>Tally / ERP integration included</div>
+          <div class="p-feat"><span class="ck">✓</span>Dedicated customer success manager</div>
+        </div>
+        <button class="p-btn">Request Demo</button>
+      </div>
+      <!-- Enterprise -->
+      <div class="p-card fade-up">
+        <div class="p-tier">Enterprise</div>
+        <div class="p-name">Custom Scale</div>
+        <div class="p-who">Agri-input majors, national agri-NBFCs, FMCG companies, and government bodies.</div>
+        <div class="p-price">₹60L+<span> / yr</span></div>
+        <div class="p-cadence">Custom contract · Multi-year options available</div>
+        <div class="p-divider"></div>
+        <div class="p-features">
+          <div class="p-feat"><span class="ck">✓</span>Everything in Growth</div>
+          <div class="p-feat"><span class="ck">✓</span>Unlimited farm parcels + clusters</div>
+          <div class="p-feat"><span class="ck">✓</span>Custom model training (crop-specific)</div>
+          <div class="p-feat"><span class="ck">✓</span>National-level demand intelligence</div>
+          <div class="p-feat"><span class="ck">✓</span>White-label traceability portal</div>
+          <div class="p-feat"><span class="ck">✓</span>SLA 99.9% uptime + priority support</div>
+          <div class="p-feat"><span class="ck">✓</span>On-site onboarding + quarterly reviews</div>
+        </div>
+        <button class="p-btn">Contact Sales</button>
+      </div>
+    </div>
+    <p class="pricing-note">All plans start with a 90-day paid pilot at 40% of annual value. <a href="#cta">Talk to us</a> about the right entry point for your organisation. API-only pricing available for lenders at ₹25–60/call.</p>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="container">
+    <div class="sec-eye light fade-up">Roadmap</div>
+    <h2 class="sec-title light fade-up">From pilot to platform<br>in 24 months.</h2>
+    <div class="rm-track fade-up">
+      <div class="rm-line"></div>
+      <div class="rm-progress" id="rmProgress"></div>
+      <div class="rm-items">
+        <div class="rm-item done">
+          <div class="rm-dot done"><div class="rm-dot-icon">🛰️</div></div>
+          <div class="rm-period">Q1 2026</div>
+          <div class="rm-title">Data pipeline live</div>
+          <div class="rm-desc">Sentinel-2 NDVI, Agmarknet, IMD APIs integrated. 2 districts.</div>
+        </div>
+        <div class="rm-item done">
+          <div class="rm-dot done"><div class="rm-dot-icon">🌾</div></div>
+          <div class="rm-period">Q2 2026</div>
+          <div class="rm-title">YieldCast v1 trained</div>
+          <div class="rm-desc">LSTM model live on soybean + wheat. First LOI signed.</div>
+        </div>
+        <div class="rm-item current">
+          <div class="rm-dot current"><div class="rm-dot-icon">⚡</div></div>
+          <div class="rm-period">Q3 2026</div>
+          <div class="rm-title">Pilot deployment</div>
+          <div class="rm-desc">TraceChain + YieldCast for 1 food processor, 1 NBFC lender.</div>
+        </div>
+        <div class="rm-item upcoming">
+          <div class="rm-dot upcoming"><div class="rm-dot-icon">💰</div></div>
+          <div class="rm-period">Q4 2026</div>
+          <div class="rm-title">First ARR milestone</div>
+          <div class="rm-desc">3 paying customers. ₹60–80L ARR. InputIQ beta live.</div>
+        </div>
+        <div class="rm-item upcoming">
+          <div class="rm-dot upcoming"><div class="rm-dot-icon">🗺️</div></div>
+          <div class="rm-period">H1 2027</div>
+          <div class="rm-title">Multi-cluster scale</div>
+          <div class="rm-desc">3 states, 10+ customers, ₹3Cr ARR. Seed round raise.</div>
+        </div>
+        <div class="rm-item upcoming">
+          <div class="rm-dot upcoming"><div class="rm-dot-icon">🌏</div></div>
+          <div class="rm-period">H2 2027</div>
+          <div class="rm-title">SEA expansion</div>
+          <div class="rm-desc">Indonesia + Vietnam pilot. National intelligence product live.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section id="founder">
+  <div class="container">
+    <div class="founder-grid">
+      <div class="founder-left fade-up">
+        <div class="founder-ey">Founder</div>
+        <div class="founder-q">The data to transform Indian agriculture already exists — in satellite passes, soil sensors, and mandi ledgers. We just needed to listen.</div>
+        <p class="founder-bio">Bhushan Darekar built Stellrix from a conviction forged at the intersection of agri-business and machine learning: that the food supply chain's biggest inefficiencies are not operational — they're informational. Before Stellrix, Bhushan worked across agri-input distribution and supply chain analytics, observing firsthand that enterprise buyers, processors, and lenders made billion-rupee decisions on instinct and last season's spreadsheets.</p>
+        <p class="founder-bio">Stellrix is his answer to that gap — an intelligence layer that plugs into existing workflows, speaks the language of compliance and credit, and delivers prescriptive insight rather than raw data dashboards. The mission is to make Indian agriculture as data-driven as the industries it feeds.</p>
+        <div class="founder-tags">
+          <span class="ftag">Agri Supply Chain</span>
+          <span class="ftag">Machine Learning</span>
+          <span class="ftag">B2B SaaS</span>
+          <span class="ftag">India → SEA</span>
+          <span class="ftag">Field to Fork</span>
+        </div>
+      </div>
+      <div class="founder-right fade-up">
+        <div class="founder-profile-card">
+          <div class="fp-header">
+            <div class="fp-avatar">BD</div>
+            <div>
+              <div class="fp-name">Bhushan Darekar</div>
+              <div class="fp-role">Founder & CEO · Stellrix Technologies</div>
+            </div>
+          </div>
+          <div class="fp-metrics">
+            <div class="fp-metric"><div class="fp-m-val">8 yrs</div><div class="fp-m-lbl">Agri supply chain experience</div></div>
+            <div class="fp-metric"><div class="fp-m-val">₹24L Cr</div><div class="fp-m-lbl">Market Stellrix addresses</div></div>
+            <div class="fp-metric"><div class="fp-m-val">3</div><div class="fp-m-lbl">Anchor pilots in pipeline</div></div>
+            <div class="fp-metric"><div class="fp-m-val">14+</div><div class="fp-m-lbl">Crops in the model</div></div>
+          </div>
+        </div>
+        <div class="founder-expertise">
+          <div class="fe-title">Areas of expertise</div>
+          <div class="fe-items">
+            <div class="fe-item"><div class="fe-icon">🌾</div>Agri-input distribution & supply chain analytics</div>
+            <div class="fe-item"><div class="fe-icon">🤖</div>Applied machine learning for geospatial forecasting</div>
+            <div class="fe-item"><div class="fe-icon">🏦</div>Agri-fintech credit risk &amp; scoring models</div>
+            <div class="fe-item"><div class="fe-icon">📋</div>FSSAI &amp; EU Farm-to-Fork compliance frameworks</div>
+            <div class="fe-item"><div class="fe-icon">🌏</div>India → Southeast Asia agri-tech market entry</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="container">
+    <h2 class="cta-title">Ready to move from<br><em>instinct to intelligence?</em></h2>
+    <p class="cta-sub">Join food processors, agri-lenders, and FPOs already on the Stellrix platform.</p>
+    <div class="cta-form">
+      <input class="cta-inp" type="email" placeholder="your@company.com" />
+      <button class="btn-cta">Request Demo →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="foot-inner">
+      <div>
+        <div class="foot-brand">Stell<em>rix</em></div>
+        <div class="foot-tag">Intelligence layer for India's food supply chain. Field to fork, powered by AI.</div>
+      </div>
+      <div>
+        <div class="foot-h">Platform</div>
+        <ul class="foot-ul"><li><a href="#">YieldCast</a></li><li><a href="#">TraceChain</a></li><li><a href="#">InputIQ</a></li><li><a href="#">API Docs</a></li></ul>
+      </div>
+      <div>
+        <div class="foot-h">Company</div>
+        <ul class="foot-ul"><li><a href="#">About</a></li><li><a href="#founder">Founder</a></li><li><a href="#">Careers</a></li><li><a href="#">Press</a></li></ul>
+      </div>
+      <div>
+        <div class="foot-h">Contact</div>
+        <ul class="foot-ul"><li><a href="#">hello@stellrix.in</a></li><li><a href="#">Mumbai · Pune</a></li><li><a href="#">LinkedIn</a></li><li><a href="#">Twitter / X</a></li></ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span class="foot-copy">© 2026 Stellrix Technologies Pvt. Ltd. All rights reserved.</span>
+      <div class="foot-links"><a href="#">Privacy Policy</a><a href="#">Terms of Use</a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---- NAV ---- */
+const nav=document.getElementById('navbar');
+addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>50),{passive:true});
+
+/* ---- DASHBOARD BARS ---- */
+const heights=[32,48,38,60,44,72,54,80,62,88,70,84];
+const dc=document.getElementById('dashChart');
+if(dc) heights.forEach((h,i)=>{const b=document.createElement('div');b.className='dbar'+(i===heights.length-1?' hi':'');b.style.cssText=`height:${h}%;animation-delay:${i*.04}s`;dc.appendChild(b);});
+
+/* ---- WHEAT FIELD ---- */
+(function(){
+  const wrap=document.getElementById('wheatWrap');if(!wrap)return;
+  const W=Math.max(window.innerWidth,1400);
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width','100%');svg.setAttribute('height','130');svg.setAttribute('viewBox',`0 0 ${W} 130`);svg.setAttribute('preserveAspectRatio','xMidYMax slice');svg.style.display='block';
+  const sty=document.createElement('style');sty.textContent='@keyframes wsway{0%{transform:rotate(-3.5deg)} 100%{transform:rotate(3.5deg)}}';document.head.appendChild(sty);
+  const count=Math.floor(W/16);
+  for(let i=0;i<count;i++){
+    const x=(i/count)*W+(Math.random()*10-5),h=55+Math.random()*60,dur=2.2+Math.random()*1.8,del=Math.random()*2,alpha=0.25+Math.random()*0.3;
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');g.style.cssText=`transform-origin:${x}px 130px;animation:wsway ${dur}s ease-in-out ${del}s infinite alternate`;
+    const ln=document.createElementNS('http://www.w3.org/2000/svg','line');ln.setAttribute('x1',x);ln.setAttribute('y1',130);ln.setAttribute('x2',x);ln.setAttribute('y2',130-h);ln.setAttribute('stroke',`rgba(174,219,177,${alpha})`);ln.setAttribute('stroke-width','1.4');
+    const el=document.createElementNS('http://www.w3.org/2000/svg','ellipse');el.setAttribute('cx',x);el.setAttribute('cy',130-h-8);el.setAttribute('rx','2.5');el.setAttribute('ry','9');el.setAttribute('fill',`rgba(174,219,177,${alpha*0.85})`);
+    g.appendChild(ln);g.appendChild(el);svg.appendChild(g);
+  }
+  wrap.appendChild(svg);
+})();
+
+/* ---- FLOATING PARTICLES ---- */
+(function(){
+  const hero=document.getElementById('hero');
+  const ps=document.createElement('style');ps.textContent='@keyframes fUp{0%{opacity:.7;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-380px) scale(.4)}}';document.head.appendChild(ps);
+  function spawn(){const p=document.createElement('div');const x=Math.random()*window.innerWidth,sz=1.5+Math.random()*3.5,dur=4+Math.random()*5,del=Math.random()*2;p.style.cssText=`position:absolute;left:${x}px;bottom:${60+Math.random()*40}px;width:${sz}px;height:${sz}px;border-radius:50%;background:rgba(174,219,177,${.18+Math.random()*.22});pointer-events:none;z-index:1;animation:fUp ${dur}s ${del}s ease-out forwards`;hero.appendChild(p);setTimeout(()=>p.remove(),(dur+del)*1000);}
+  let pi=setInterval(spawn,450);setTimeout(()=>{clearInterval(pi);pi=setInterval(spawn,1200);},15000);
+})();
+
+/* ---- TICKER ---- */
+(function(){
+  const items=[
+    {lbl:'Soybean yield forecast updated',loc:'Maharashtra · Latur cluster',val:'4,218 MT',note:'±8%'},
+    {lbl:'Traceability certificate issued',loc:'AP · Chilli Batch #2847',val:'Export cleared',note:'EU F2F compliant'},
+    {lbl:'Nitrogen deficiency alert fired',loc:'Punjab · Wheat Zone 3',val:'6-week early signal',note:'InputIQ'},
+    {lbl:'Loan risk score computed',loc:'Samunnati NBFC · 428 loans',val:'Avg score 2.9/10',note:'Low risk season'},
+    {lbl:'Cotton yield forecast updated',loc:'Telangana · Cluster C',val:'2,840 MT',note:'±9% accuracy'},
+    {lbl:'New batch logged',loc:'Basmati · Karnal, Haryana',val:'Batch #5521',note:'Chain of custody live'},
+    {lbl:'Onion procurement signal',loc:'Nashik · 3 FPO clusters',val:'Harvest in 9 weeks',note:'Forward buy window'},
+  ];
+  const track=document.getElementById('tickerTrack');
+  [...items,...items].forEach(it=>{const s=document.createElement('span');s.className='t-item';s.innerHTML=`<strong>${it.lbl}</strong> · ${it.loc} · <strong>${it.val}</strong> · ${it.note} <span class="t-sep">·</span>`;track.appendChild(s);});
+})();
+
+/* ---- SCROLL FADE-UP ---- */
+(function(){
+  const els=document.querySelectorAll('.fade-up');
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(!e.isIntersecting)return;const sibs=e.target.parentElement.querySelectorAll('.fade-up');let d=0;sibs.forEach((s,i)=>{if(s===e.target)d=i;});setTimeout(()=>e.target.classList.add('visible'),Math.min(d,4)*80);obs.unobserve(e.target);});
+  },{threshold:.1});
+  els.forEach(el=>obs.observe(el));
+})();
+
+/* ---- COUNTERS ---- */
+(function(){
+  const nums=document.querySelectorAll('.s-num[data-to]');
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(!e.isIntersecting)return;const el=e.target,target=parseInt(el.dataset.to),suf=el.dataset.suffix||'';let cur=0;const t=setInterval(()=>{cur=Math.min(cur+target/55,target);el.textContent=Math.round(cur)+suf;if(cur>=target)clearInterval(t);},18);obs.unobserve(el);});
+  },{threshold:.5});
+  nums.forEach(n=>obs.observe(n));
+})();
+
+/* ---- ROADMAP PROGRESS ---- */
+(function(){
+  const prog=document.getElementById('rmProgress');if(!prog)return;
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(!e.isIntersecting)return;setTimeout(()=>prog.style.width='38%',300);obs.unobserve(e.target);});
+  },{threshold:.3});
+  obs.observe(prog);
+})();
+
+/* ---- INTERACTIVE YIELD CHART ---- */
+(function(){
+  const crops={
+    soybean:{label:'Soybean · Latur, Maharashtra',forecast:4218,change:'+3.2%',risk:'2.4/10',accuracy:'±7%',insight:'<strong>Soil moisture index</strong> is tracking 14% above seasonal average in the Latur cluster. Stellrix is projecting a 3.2% yield uplift vs last week\'s estimate. Forward buy window opens in 6 weeks.',weeks:['Jul W1','Jul W2','Jul W3','Aug W1','Aug W2','Aug W3','Sep W1','Sep W2','Sep W3','Oct W1','Oct W2','Oct W3'],actual:[null,null,null,null,null,null,2800,3100,3400,3800,4100,4218],forecast:[2600,2900,3050,3100,3300,3500,2780,3080,3420,3790,4090,4218],band:[180,200,210,190,175,160,100,90,80,65,50,0]},
+    wheat:{label:'Wheat · Ludhiana, Punjab',forecast:5840,change:'+1.8%',risk:'1.8/10',accuracy:'±6%',insight:'<strong>Rabi wheat</strong> in Punjab is tracking strong. Consecutive days of optimal temperature (18–22°C) and adequate soil NPK are pointing to above-average yield. Recommend forward booking now.',weeks:['Nov W1','Nov W2','Nov W3','Dec W1','Dec W2','Dec W3','Jan W1','Jan W2','Jan W3','Feb W1','Feb W2','Feb W3'],actual:[null,null,null,null,null,null,3200,3600,4000,4500,5100,5840],forecast:[3000,3400,3600,3700,3900,4100,3180,3590,3990,4490,5080,5840],band:[220,210,190,180,165,150,110,95,80,60,40,0]},
+    cotton:{label:'Cotton · Warangal, Telangana',forecast:2840,change:'-0.4%',risk:'4.1/10',accuracy:'±9%',insight:'<strong>Pink bollworm pressure</strong> detected via satellite canopy density anomaly in Zone B. InputIQ has flagged a targeted crop protection intervention. Yield revised down 0.4% from prior week.',weeks:['Jun W1','Jun W2','Jun W3','Jul W1','Jul W2','Jul W3','Aug W1','Aug W2','Aug W3','Sep W1','Sep W2','Sep W3'],actual:[null,null,null,null,null,null,1600,1900,2100,2380,2640,2840],forecast:[1700,1900,2000,2050,2200,2300,1580,1890,2090,2370,2630,2840],band:[250,230,215,200,185,170,130,110,95,75,50,0]},
+    onion:{label:'Onion · Nashik, Maharashtra',forecast:3120,change:'+5.1%',risk:'3.2/10',accuracy:'±8%',insight:'<strong>Late monsoon withdrawal</strong> has created ideal bulbing conditions. Stellrix projects a 5.1% uplift vs prior estimate. Forward buying window for processors is open — harvest expected in 9 weeks.',weeks:['Aug W1','Aug W2','Aug W3','Sep W1','Sep W2','Sep W3','Oct W1','Oct W2','Oct W3','Nov W1','Nov W2','Nov W3'],actual:[null,null,null,null,null,null,1800,2000,2300,2600,2900,3120],forecast:[1700,1900,2050,2100,2200,2400,1790,1990,2290,2590,2880,3120],band:[200,190,175,165,150,140,100,85,70,55,35,0]},
+  };
+  let currentCrop='soybean';
+  const canvas=document.getElementById('yieldCanvas');if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  function renderMeta(key){const d=crops[key];const m=document.getElementById('demoMeta');m.innerHTML=`<div class="dm-item"><div class="dm-lbl">Location & Crop</div><div class="dm-val" style="font-size:18px">${d.label}</div></div><div class="dm-item"><div class="dm-lbl">Forecast Yield</div><div class="dm-val">${d.forecast.toLocaleString('en-IN')} MT</div></div><div class="dm-item"><div class="dm-lbl">Week-on-Week</div><div class="dm-val" style="font-size:22px" class="${d.change.startsWith('+')? 'dm-up':'dm-dn'}">${d.change}</div></div><div class="dm-item"><div class="dm-lbl">Model Accuracy</div><div class="dm-val" style="font-size:22px">${d.accuracy}</div></div>`;}
+  function drawChart(key){
+    const d=crops[key];const W=canvas.clientWidth||canvas.width,H=canvas.clientHeight||260;
+    canvas.width=W*devicePixelRatio;canvas.height=H*devicePixelRatio;ctx.scale(devicePixelRatio,devicePixelRatio);
+    const pad={l:44,r:20,t:20,b:36},iW=W-pad.l-pad.r,iH=H-pad.t-pad.b;
+    const allVals=[...d.actual.filter(v=>v!==null),...d.forecast];
+    const minV=Math.min(...allVals)*0.88,maxV=Math.max(...allVals)*1.06;
+    function px(i){return pad.l+i*(iW/(d.weeks.length-1));}
+    function py(v){return pad.t+iH-(((v-minV)/(maxV-minV))*iH);}
+    // Grid lines
+    ctx.strokeStyle='rgba(174,219,177,0.08)';ctx.lineWidth=1;
+    for(let i=0;i<=4;i++){const y=pad.t+i*(iH/4);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();ctx.fillStyle='rgba(174,219,177,0.25)';ctx.font=`10px "DM Sans",sans-serif`;ctx.textAlign='right';ctx.fillText(Math.round(maxV-i*(maxV-minV)/4).toLocaleString('en-IN'),pad.l-6,y+4);}
+    // Week labels
+    ctx.fillStyle='rgba(174,219,177,0.22)';ctx.textAlign='center';ctx.font=`10px "DM Sans",sans-serif`;
+    d.weeks.forEach((w,i)=>{if(i%3===0)ctx.fillText(w,px(i),H-pad.b+18);});
+    // Confidence band
+    const midIdx=Math.floor(d.weeks.length/2);
+    ctx.beginPath();ctx.moveTo(px(midIdx),py(d.forecast[midIdx]+d.band[midIdx]));
+    for(let i=midIdx+1;i<d.weeks.length;i++)ctx.lineTo(px(i),py(d.forecast[i]+d.band[i]));
+    for(let i=d.weeks.length-1;i>=midIdx;i--)ctx.lineTo(px(i),py(d.forecast[i]-d.band[i]));
+    ctx.closePath();ctx.fillStyle='rgba(126,189,130,0.12)';ctx.fill();
+    // Forecast line
+    ctx.beginPath();ctx.setLineDash([5,4]);ctx.strokeStyle='rgba(233,213,160,0.7)';ctx.lineWidth=1.5;
+    d.forecast.forEach((v,i)=>{if(i===0)ctx.moveTo(px(i),py(v));else ctx.lineTo(px(i),py(v));});ctx.stroke();ctx.setLineDash([]);
+    // Actual line (only where data exists)
+    let started=false;ctx.beginPath();ctx.strokeStyle='#7EBD82';ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.lineCap='round';
+    d.actual.forEach((v,i)=>{if(v===null)return;if(!started){ctx.moveTo(px(i),py(v));started=true;}else ctx.lineTo(px(i),py(v));});ctx.stroke();
+    // Dots for actuals
+    ctx.fillStyle='#7EBD82';
+    d.actual.forEach((v,i)=>{if(v===null)return;ctx.beginPath();ctx.arc(px(i),py(v),3.5,0,Math.PI*2);ctx.fill();});
+    // Now dot
+    const lv=d.forecast[d.forecast.length-1];ctx.beginPath();ctx.arc(px(d.forecast.length-1),py(lv),6,0,Math.PI*2);ctx.fillStyle='#E9D5A0';ctx.fill();ctx.strokeStyle='rgba(233,213,160,0.4)';ctx.lineWidth=3;ctx.stroke();
+  }
+  function update(key){
+    currentCrop=key;renderMeta(key);drawChart(key);
+    document.getElementById('demoInsightText').innerHTML=crops[key].insight;
+    document.querySelectorAll('.dtab').forEach(t=>{t.classList.toggle('active',t.dataset.crop===key);});
+  }
+  document.getElementById('demotabs').addEventListener('click',e=>{if(e.target.dataset.crop)update(e.target.dataset.crop);});
+  update('soybean');
+  let ro;try{ro=new ResizeObserver(()=>drawChart(currentCrop));ro.observe(canvas);}catch(e){window.addEventListener('resize',()=>drawChart(currentCrop));}
+})();
+
+/* ---- CLUSTER MAP ---- */
+(function(){
+  const clusters=[
+    {name:'Maharashtra · Nashik & Latur',status:'live',crops:'Soybean, Onion, Grapes',farmers:'1,240',yield:'4,218 MT',note:'Kharif 2026'},
+    {name:'Punjab · Ludhiana & Amritsar',status:'live',crops:'Wheat, Paddy, Maize',farmers:'890',yield:'5,840 MT',note:'Rabi 2025–26'},
+    {name:'Telangana · Warangal & Khammam',status:'soon',crops:'Cotton, Chilli, Turmeric',farmers:'620',yield:'Pilot Q3 2026',note:'Deploying'},
+    {name:'Karnataka · Belgaum & Dharwad',status:'soon',crops:'Sugarcane, Sunflower, Jowar',farmers:'540',yield:'Pilot Q4 2026',note:'Deploying'},
+    {name:'Rajasthan · Kota & Baran',status:'soon',crops:'Soybean, Mustard, Coriander',farmers:'480',yield:'Pilot Q4 2026',note:'Deploying'},
+  ];
+  const list=document.getElementById('clusterList');if(!list)return;
+  clusters.forEach((c,i)=>{
+    const card=document.createElement('div');card.className='cl-card'+(i===0?' active':'');
+    card.innerHTML=`<div class="cl-top"><div class="cl-name">${c.name}</div><div class="cl-status ${c.status}">${c.status==='live'?'Live':c.note}</div></div><div class="cl-crops">${c.crops}</div><div class="cl-kpi-row"><div class="cl-kpi"><span>${c.farmers}</span>Farmers</div><div class="cl-kpi"><span>${c.yield}</span>${c.status==='live'?'Forecast':'Status'}</div></div>`;
+    card.addEventListener('click',()=>{document.querySelectorAll('.cl-card').forEach(c=>c.classList.remove('active'));card.classList.add('active');});
+    list.appendChild(card);
+  });
+})();
+
+/* ---- LEAF CURSOR TRAIL ---- */
+(function(){
+  let last=0;
+  document.addEventListener('mousemove',e=>{const now=Date.now();if(now-last<90)return;last=now;const lf=document.createElement('div');const rot=Math.random()*360,sz=8+Math.random()*6;lf.style.cssText=`position:fixed;left:${e.clientX-sz/2}px;top:${e.clientY-sz/2}px;width:${sz}px;height:${sz}px;border-radius:50% 0 50% 0;background:rgba(84,148,88,.25);pointer-events:none;z-index:9999;transform:rotate(${rot}deg);transition:opacity .7s,transform .7s;`;document.body.appendChild(lf);requestAnimationFrame(()=>{lf.style.opacity='0';lf.style.transform=`rotate(${rot+60}deg) scale(.2)`;});setTimeout(()=>lf.remove(),750);},{passive:true});
+})();
+
+/* ---- MODULE TILT ---- */
+document.querySelectorAll('.mod').forEach(card=>{
+  card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform=`translateY(-8px) rotateX(${-y*4}deg) rotateY(${x*4}deg)`;});
+  card.addEventListener('mouseleave',()=>{card.style.transform='';});
+});
+</script>
+</body>
+</html>
