@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stellrix — A map of what American industry can make</title>
+<meta name="description" content="Stellrix maps the manufacturing capability of the entire US industrial base — not who supplies whom today, but who could. Capability search and Qualification Distance for defense and industrial sourcing.">
+<meta property="og:title" content="Stellrix — A map of what American industry can make">
+<meta property="og:description" content="Three shops make the part today. Two hundred could. Stellrix computes the distance between capable and qualified.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://stellrix.online">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2.5 27.5 9v14L16 29.5 4.5 23V9z' fill='none' stroke='%23FF6A1A' stroke-width='2.2'/%3E%3Cpath d='M16 9.4l1.7 4.9 4.9 1.7-4.9 1.7-1.7 4.9-1.7-4.9L9.4 16l4.9-1.7z' fill='%23FF6A1A'/%3E%3C/svg%3E">
+
+<style>
+/* ─────────────────────────────────────────────
+   STELLRIX — design tokens
+   Register: cartographic + machine shop.
+   Near-black ground, hi-vis industrial amber,
+   survey-grid linework. No patriotic styling.
+   ───────────────────────────────────────────── */
+:root{
+  --bg:#000;
+  --ink:#fff;
+  --grey:#9AA3A0;
+  --grey-dim:#6B7370;
+  --acc:#FF6A1A;
+  --acc-bright:#FF9147;
+  --line:rgba(255,255,255,.08);
+  --line-2:rgba(255,255,255,.14);
+  --glass:rgba(10,11,11,.6);
+  --glass-2:rgba(16,17,17,.72);
+  --ok:#5FD08A;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --pad:clamp(20px,4vw,40px);
+  --sec-y:clamp(84px,11vw,152px);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-weight:400;font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--acc-bright);outline-offset:3px;border-radius:4px}
+
+.wrap{width:100%;max-width:1280px;margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+.sec{padding-top:var(--sec-y);padding-bottom:var(--sec-y);position:relative}
+.sec-tight{padding-top:clamp(64px,8vw,104px);padding-bottom:clamp(64px,8vw,104px)}
+
+/* type ------------------------------------------------ */
+.eyebrow{
+  font-family:var(--mono);font-size:11px;font-weight:500;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--acc);
+  display:inline-block;margin:0 0 22px;
+}
+.h1{
+  font-size:clamp(44px,7.2vw,104px);font-weight:300;line-height:.98;
+  letter-spacing:-.032em;margin:0;
+}
+.h2{
+  font-size:clamp(32px,4.4vw,60px);font-weight:300;line-height:1.06;
+  letter-spacing:-.026em;margin:0;
+}
+.h3{font-size:20px;font-weight:500;letter-spacing:-.015em;line-height:1.3;margin:0 0 10px}
+.lead{color:var(--grey);font-size:clamp(15px,1.3vw,18px);line-height:1.65;font-weight:300;max-width:62ch;margin:0}
+.state{
+  font-size:clamp(26px,3.5vw,48px);font-weight:300;line-height:1.22;
+  letter-spacing:-.024em;margin:0;max-width:20ch;
+}
+.hl{color:var(--acc)}
+.mono{font-family:var(--mono)}
+
+/* buttons --------------------------------------------- */
+.btn{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:13px 26px;border-radius:999px;
+  font-size:14px;font-weight:500;letter-spacing:-.01em;
+  border:1px solid transparent;white-space:nowrap;
+  transition:transform .22s cubic-bezier(.2,.7,.3,1),background-color .22s,color .22s,border-color .22s;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn-acc{background:var(--acc);color:#0A0503}
+.btn-acc:hover{background:var(--acc-bright)}
+.btn-white{background:#fff;color:#000}
+.btn-white:hover{background:var(--acc);color:#0A0503}
+.btn-ghost{border-color:var(--line-2);color:#fff}
+.btn-ghost:hover{border-color:var(--acc);color:var(--acc)}
+.btn-sm{padding:10px 20px;font-size:13px}
+
+/* nav -------------------------------------------------- */
+.nav{position:fixed;inset:0 0 auto 0;z-index:90;padding:20px 0;transition:padding .3s ease;pointer-events:none}
+.brand,.pill,.burger{pointer-events:auto}
+.nav.small{padding:12px 0}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:11px;transition:opacity .3s ease,transform .3s ease}
+.brand svg{width:26px;height:26px;color:var(--acc);flex:none}
+.brand-name{font-size:16px;font-weight:500;letter-spacing:.07em}
+.nav.small .brand{opacity:0;transform:translateX(-10px);pointer-events:none}
+
+.pill{
+  display:flex;align-items:center;gap:4px;
+  padding:7px 7px 7px 16px;border-radius:999px;
+  background:var(--glass);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid var(--line);transition:padding .3s ease,gap .3s ease;
+}
+.pill-mark{width:22px;height:22px;color:var(--acc);margin-right:6px;display:none;flex:none}
+.nav.small .pill-mark{display:block}
+.nav.small .pill{padding-left:12px}
+.nav-link{
+  position:relative;padding:8px 14px;border-radius:999px;
+  font-size:13.5px;color:var(--grey);transition:color .2s;
+}
+.nav-link:hover{color:#fff}
+.nav-link.on{color:#fff}
+.nav-link.on::after{
+  content:"";position:absolute;left:50%;bottom:1px;width:4px;height:4px;
+  margin-left:-2px;border-radius:50%;background:var(--acc);
+}
+.nav-cta{margin-left:8px}
+.burger{display:none;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);
+  background:var(--glass);backdrop-filter:blur(18px);align-items:center;justify-content:center}
+.burger span{display:block;width:16px;height:1.5px;background:#fff;position:relative}
+.burger span::before,.burger span::after{content:"";position:absolute;left:0;width:16px;height:1.5px;background:#fff}
+.burger span::before{top:-5px}.burger span::after{top:5px}
+
+.sheet{
+  position:fixed;inset:0;z-index:95;display:none;flex-direction:column;
+  justify-content:center;gap:6px;padding:0 var(--pad);
+  background:rgba(0,0,0,.94);backdrop-filter:blur(22px);
+}
+.sheet.open{display:flex}
+.sheet a{font-size:28px;font-weight:300;letter-spacing:-.02em;padding:12px 0;border-bottom:1px solid var(--line)}
+.sheet .btn{margin-top:26px;align-self:flex-start}
+.sheet-x{position:absolute;top:24px;right:var(--pad);font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--grey)}
+
+/* photo frames ---------------------------------------- */
+.photo{position:absolute;inset:0;overflow:hidden;background:#050605}
+.photo::after{
+  content:"";position:absolute;inset:0;z-index:2;
+  background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:52px 52px;opacity:.5;
+}
+.photo img{
+  position:relative;z-index:1;width:100%;height:100%;object-fit:cover;
+  filter:grayscale(.55) contrast(1.12) brightness(.42);
+}
+.photo-fb{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(120% 90% at 78% 8%,rgba(255,106,26,.16),transparent 58%),
+    radial-gradient(90% 70% at 10% 92%,rgba(120,140,150,.16),transparent 60%),
+    linear-gradient(160deg,#0C0D0D 0%,#050505 55%,#0A0908 100%);
+}
+.veil{position:absolute;inset:0}
+
+/* hero ------------------------------------------------- */
+.hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;padding-bottom:clamp(120px,18vw,210px)}
+.hero .veil{
+  background:linear-gradient(180deg,rgba(0,0,0,.86) 0%,rgba(0,0,0,.5) 34%,rgba(0,0,0,.78) 74%,#000 100%),
+             linear-gradient(90deg,rgba(0,0,0,.72) 0%,rgba(0,0,0,.18) 62%);
+}
+.hero-in{position:relative;z-index:2;width:100%}
+.hero .h1{max-width:none}
+.hero-sub{margin:26px 0 0;color:var(--grey);font-size:clamp(16px,1.5vw,20px);font-weight:300;max-width:56ch}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+.hero-meta{
+  display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:44px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--grey-dim);text-transform:uppercase;
+}
+.hero-meta b{color:var(--acc);font-weight:500}
+
+/* glass surfaces --------------------------------------- */
+.glass{
+  background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--line);border-radius:16px;
+}
+
+/* demo card -------------------------------------------- */
+.demo-hold{position:relative;z-index:5;margin-top:clamp(-140px,-11vw,-90px)}
+.demo{padding:0;overflow:hidden;box-shadow:0 40px 90px -30px rgba(0,0,0,.9)}
+.demo-top{
+  display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--grey-dim);text-transform:uppercase;
+}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--acc);flex:none}
+.demo-top span{margin-left:auto;letter-spacing:.16em}
+.demo-body{padding:clamp(20px,3vw,34px)}
+.prompt{
+  border-left:2px solid var(--acc);padding:2px 0 2px 18px;margin:0 0 30px;
+  font-size:clamp(15px,1.5vw,19px);font-weight:300;line-height:1.5;color:#EDEFEE;max-width:74ch;
+}
+.prompt em{font-style:normal;font-family:var(--mono);font-size:.86em;color:var(--acc-bright)}
+
+.worker{
+  display:flex;gap:16px;padding:15px 0;border-top:1px solid var(--line);
+  opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease;
+}
+.worker.in{opacity:1;transform:none}
+.worker-tag{
+  font-family:var(--mono);font-size:12.5px;color:var(--acc);
+  flex:0 0 152px;padding-top:2px;letter-spacing:-.01em;
+}
+.worker-txt{color:var(--grey);font-size:14px;line-height:1.55;font-weight:300;margin:0;max-width:66ch}
+.worker-bar{flex:none;width:44px;padding-top:6px}
+.worker-bar i{display:block;height:2px;background:var(--line-2);border-radius:2px;position:relative;overflow:hidden}
+.worker-bar i::after{
+  content:"";position:absolute;inset:0;width:0;background:var(--acc);transition:width .9s ease .15s;
+}
+.worker.in .worker-bar i::after{width:100%}
+
+.done{
+  display:flex;align-items:flex-start;gap:12px;margin-top:18px;padding-top:18px;
+  border-top:1px solid var(--line);font-size:14.5px;color:#DFE3E1;font-weight:300;
+  opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease;
+}
+.done.in{opacity:1;transform:none}
+.done .tick{color:var(--ok);font-family:var(--mono);flex:none}
+.done b{color:#fff;font-weight:500}
+
+/* two-map comparison (the signature graphic) ------------ */
+.maps{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px;
+  opacity:0;transform:translateY(10px);transition:opacity .6s ease,transform .6s ease;
+}
+.maps.in{opacity:1;transform:none}
+.map{border:1px solid var(--line);border-radius:12px;padding:14px;background:rgba(255,255,255,.02)}
+.map-h{
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--grey-dim);text-transform:uppercase;
+}
+.map-n{font-family:var(--mono);font-size:22px;letter-spacing:-.02em;color:#fff}
+.map-n.acc{color:var(--acc)}
+.map svg{width:100%;height:auto;display:block}
+
+/* input bar --------------------------------------------- */
+.bar{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  margin-top:26px;padding:11px 11px 11px 16px;border:1px solid var(--line);
+  border-radius:999px;background:rgba(255,255,255,.03);
+}
+.bar-txt{color:var(--grey-dim);font-size:14px;font-weight:300;flex:1 1 200px;min-width:0}
+.chip{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:6px 11px;border-radius:999px;border:1px solid var(--line-2);color:var(--grey);white-space:nowrap;
+}
+.send{
+  width:36px;height:36px;border-radius:50%;background:var(--acc);color:#0A0503;
+  display:grid;place-items:center;flex:none;transition:background .2s,transform .2s;
+}
+.send:hover{background:var(--acc-bright);transform:translateY(-1px)}
+
+/* split header ------------------------------------------ */
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,5vw,80px);align-items:end;margin-bottom:clamp(40px,5vw,66px)}
+.split-r{display:flex;flex-direction:column;align-items:flex-start;gap:24px}
+
+/* image / glass cards ----------------------------------- */
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2vw,26px)}
+.card{display:flex;flex-direction:column}
+.card-vis{
+  position:relative;aspect-ratio:4/3.1;border-radius:16px;overflow:hidden;
+  border:1px solid var(--line);
+  transition:transform .3s cubic-bezier(.2,.7,.3,1),border-color .3s,box-shadow .3s;
+}
+.card:hover .card-vis{transform:translateY(-5px);border-color:rgba(255,106,26,.4);box-shadow:0 26px 60px -28px rgba(255,106,26,.4)}
+.card-vis .veil{background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.86))}
+.panel{
+  position:absolute;left:14px;right:14px;bottom:14px;top:14px;
+  background:linear-gradient(180deg,rgba(8,9,9,.42) 0%,rgba(12,13,13,.82) 34%,rgba(10,11,11,.88) 100%);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--line);border-radius:11px;padding:14px;
+  display:flex;flex-direction:column;gap:9px;overflow:hidden;
+}
+.p-head{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--grey-dim);
+}
+.status{
+  font-family:var(--mono);font-size:9px;letter-spacing:.12em;padding:3px 8px;border-radius:999px;
+  border:1px solid rgba(255,106,26,.42);color:var(--acc);text-transform:uppercase;white-space:nowrap;
+}
+.status.ok{border-color:rgba(95,208,138,.42);color:var(--ok)}
+.kv{display:flex;justify-content:space-between;gap:10px;font-family:var(--mono);font-size:10.5px;line-height:1.5}
+.kv span:first-child{color:var(--grey-dim)}
+.kv span:last-child{color:#E6E9E8;text-align:right}
+.kv .a{color:var(--acc)}
+.log{font-family:var(--mono);font-size:9.5px;line-height:1.75;color:var(--grey-dim);margin:0}
+.log b{color:var(--acc);font-weight:400}
+.log i{color:#C9CFCD;font-style:normal}
+.hr{height:1px;background:var(--line);margin:1px 0}
+.bars{display:flex;align-items:flex-end;gap:5px;height:44px;margin-top:auto}
+.bars i{flex:1;background:rgba(255,255,255,.13);border-radius:2px 2px 0 0}
+.bars i.a{background:var(--acc)}
+.meter{height:4px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--acc);border-radius:3px}
+.card-txt{padding:20px 2px 0}
+.card-txt p{margin:0;color:var(--grey);font-size:14.5px;font-weight:300;line-height:1.6}
+
+/* pillars ------------------------------------------------ */
+.row4{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(14px,1.6vw,20px);margin-top:clamp(38px,5vw,58px)}
+.pil{background:#0A0B0B;border:1px solid var(--line);border-radius:14px;padding:26px 22px 28px;position:relative;overflow:hidden}
+.pil::before{content:"";position:absolute;top:0;left:22px;width:40px;height:2px;background:var(--acc);border-radius:0 0 2px 2px}
+.pil h4{margin:22px 0 10px;font-size:16.5px;font-weight:500;letter-spacing:-.015em}
+.pil p{margin:0;color:var(--grey);font-size:13.5px;line-height:1.62;font-weight:300}
+
+/* centered statement ------------------------------------- */
+.mid{text-align:center;max-width:24ch;margin:0 auto}
+.mid-wide{max-width:30ch}
+.state-w{max-width:26ch}
+
+/* founder ------------------------------------------------- */
+.founder{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(28px,5vw,72px);align-items:center}
+.portrait{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);aspect-ratio:4/4.7;background:#080909}
+.portrait img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;filter:grayscale(.35) contrast(1.05) brightness(.88)}
+.portrait-fb{position:absolute;inset:0;display:grid;place-items:center;
+  background:radial-gradient(85% 65% at 50% 25%,rgba(255,106,26,.14),transparent 62%),linear-gradient(165deg,#101111,#050505)}
+.portrait-fb svg{width:34%;height:auto;color:rgba(255,106,26,.5)}
+.badge{
+  position:absolute;z-index:2;left:14px;right:14px;bottom:14px;padding:13px 16px;border-radius:12px;
+  background:var(--glass-2);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);
+}
+.badge b{display:block;font-size:16px;font-weight:500;letter-spacing:-.01em}
+.badge span{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc)}
+.f-body p{color:var(--grey);font-size:15.5px;font-weight:300;line-height:1.7;margin:20px 0 0;max-width:60ch}
+.quote{
+  border-left:2px solid var(--acc);padding:4px 0 4px 22px;margin:30px 0 0;
+  font-size:clamp(17px,1.7vw,21px);font-weight:300;line-height:1.45;letter-spacing:-.015em;color:#fff;max-width:44ch;
+}
+.f-cta{display:flex;flex-wrap:wrap;gap:11px;margin-top:32px}
+
+/* trust ---------------------------------------------------- */
+.trust{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,72px);align-items:center;margin-top:clamp(34px,4vw,52px)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.tag{
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  padding:8px 13px;border:1px solid var(--line-2);border-radius:6px;color:var(--grey);
+}
+.grid-art{
+  position:relative;border:1px solid var(--line);border-radius:16px;padding:34px;min-height:280px;
+  display:flex;flex-direction:column;justify-content:flex-end;gap:18px;overflow:hidden;background:#050606;
+}
+.grid-art::before{
+  content:"";position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.16) 1px,transparent 1px);
+  background-size:18px 18px;
+  -webkit-mask-image:radial-gradient(120% 90% at 78% 12%,#000 8%,transparent 72%);
+  mask-image:radial-gradient(120% 90% at 78% 12%,#000 8%,transparent 72%);
+}
+.grid-art .btn{position:relative;z-index:2}
+.art-cta{display:flex;flex-wrap:wrap;gap:11px;position:relative;z-index:2}
+.art-note{position:relative;z-index:2;font-family:var(--mono);font-size:10.5px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--grey-dim);margin:0}
+
+/* final cta -------------------------------------------------- */
+.fin{text-align:center}
+.fin .h2{max-width:18ch;margin:0 auto}
+.fin-cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:38px}
+
+/* footer ------------------------------------------------------ */
+.foot{position:relative;border-top:1px solid var(--line);overflow:hidden;padding-top:clamp(56px,7vw,84px)}
+.foot::before{
+  content:"";position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.13) 1px,transparent 1px);
+  background-size:20px 20px;opacity:.5;
+  -webkit-mask-image:linear-gradient(180deg,#000,transparent 62%);
+  mask-image:linear-gradient(180deg,#000,transparent 62%);
+}
+.foot-in{position:relative;z-index:2}
+.foot-top{display:grid;grid-template-columns:1.5fr repeat(4,1fr);gap:34px}
+.foot-brand p{color:var(--grey-dim);font-size:13.5px;font-weight:300;line-height:1.6;margin:16px 0 0;max-width:32ch}
+.fcol h5{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);margin:0 0 14px;font-weight:500}
+.fcol a{display:block;color:var(--grey);font-size:13.5px;padding:5px 0;transition:color .2s}
+.fcol a:hover{color:#fff}
+.mark{
+  margin-top:clamp(46px,6vw,74px);font-size:clamp(56px,15.5vw,214px);line-height:.8;font-weight:300;
+  letter-spacing:-.045em;color:rgba(255,255,255,.045);user-select:none;white-space:nowrap;
+}
+.foot-bot{
+  display:flex;flex-wrap:wrap;gap:10px 26px;justify-content:space-between;
+  border-top:1px solid var(--line);margin-top:clamp(26px,3vw,40px);padding:22px 0 34px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--grey-dim);
+}
+.foot-bot a:hover{color:var(--acc)}
+
+/* reveal ------------------------------------------------------- */
+.rv{opacity:0;transform:translateY(20px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+.rv.in{opacity:1;transform:none}
+
+/* responsive ---------------------------------------------------- */
+@media (max-width:1040px){
+  .foot-top{grid-template-columns:1fr 1fr 1fr}
+  .foot-brand{grid-column:1/-1}
+}
+@media (max-width:900px){
+  .nav-link,.nav-cta{display:none}
+  .pill{display:none}
+  .burger{display:flex}
+  .nav.small .brand{opacity:1;transform:none;pointer-events:auto}
+  .row3{grid-template-columns:1fr}
+  .row4{grid-template-columns:1fr 1fr}
+  .split{grid-template-columns:1fr;align-items:start}
+  .founder{grid-template-columns:1fr}
+  .portrait{max-width:400px;aspect-ratio:4/4.4}
+  .trust{grid-template-columns:1fr}
+  .worker{flex-wrap:wrap;gap:6px 14px}
+  .worker-tag{flex:0 0 auto}
+  .worker-bar{display:none}
+  .demo-hold{margin-top:-70px}
+  .hero{min-height:92svh;padding-bottom:150px}
+}
+@media (max-width:600px){
+  .row4{grid-template-columns:1fr}
+  .maps{grid-template-columns:1fr}
+  .foot-top{grid-template-columns:1fr 1fr}
+  .state,.mid{max-width:none}
+  .hero-meta{gap:8px 18px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.001ms !important;animation-duration:.001ms !important}
+  .rv,.worker,.done,.maps{opacity:1;transform:none}
+  .worker .worker-bar i::after{width:100%}
+}
+</style>
+</head>
+<body>
+<!-- ══════════════════════════════════════════════════════
+     NOTE FOR DEPLOY
+     · All photographs are hotlinked from Unsplash. Download,
+       darken and self-host them in /assets before production.
+       Every image has a designed CSS fallback behind it, so a
+       failed load degrades to the survey-grid gradient, not a
+       broken box.
+     · /assets/kush-jain.jpg is not included — drop the founder
+       portrait in at that path. Until then the portrait card
+       falls back to the Stellrix mark.
+     · Figures in the demo card are illustrative product output.
+       Verify counts before publishing (see foundation doc §16).
+     ══════════════════════════════════════════════════════ -->
+
+<a class="btn btn-white" href="#main" style="position:absolute;left:-9999px;top:12px;z-index:200" onfocus="this.style.left='16px'" onblur="this.style.left='-9999px'">Skip to content</a>
+
+<!-- ── NAV ───────────────────────────────────────────── -->
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="Stellrix home">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M16 2.5 27.5 9v14L16 29.5 4.5 23V9z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+        <path d="M16 9.4l1.7 4.9 4.9 1.7-4.9 1.7-1.7 4.9-1.7-4.9L9.4 16l4.9-1.7z" fill="currentColor"/>
+      </svg>
+      <span class="brand-name">STELLRIX</span>
+    </a>
+
+    <nav class="pill" aria-label="Primary">
+      <svg class="pill-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M16 2.5 27.5 9v14L16 29.5 4.5 23V9z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/>
+        <path d="M16 9.4l1.7 4.9 4.9 1.7-4.9 1.7-1.7 4.9-1.7-4.9L9.4 16l4.9-1.7z" fill="currentColor"/>
+      </svg>
+      <a class="nav-link" href="#how" data-link="how">How it works</a>
+      <a class="nav-link" href="#capabilities" data-link="capabilities">Capabilities</a>
+      <a class="nav-link" href="#founder" data-link="founder">Founder</a>
+      <a class="nav-link" href="#trust" data-link="trust">Trust</a>
+      <a class="btn btn-acc btn-sm nav-cta" href="#start">Book a demo</a>
+    </nav>
+
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><span></span></button>
+  </div>
+</header>
+
+<div class="sheet" id="sheet">
+  <button class="sheet-x" id="sheetX">CLOSE</button>
+  <a href="#how">How it works</a>
+  <a href="#capabilities">Capabilities</a>
+  <a href="#founder">Founder</a>
+  <a href="#trust">Trust &amp; data</a>
+  <a class="btn btn-acc" href="#start">Book a demo</a>
+</div>
+
+<main id="main">
+
+<!-- ── HERO ──────────────────────────────────────────── -->
+<section class="hero" id="top">
+  <div class="photo">
+    <div class="photo-fb"></div>
+    <img src="https://images.unsplash.com/photo-1565043666747-69f6646db940?auto=format&fit=crop&w=2000&q=70" alt="" onerror="this.remove()">
+  </div>
+  <div class="veil"></div>
+
+  <div class="wrap hero-in">
+    <h1 class="h1">Three shops make it.<br>Two hundred could.</h1>
+    <p class="hero-sub">Stellrix maps what the American industrial base can physically build — not what it currently sells — and computes how far each shop sits from qualified.</p>
+    <div class="hero-cta">
+      <a class="btn btn-white" href="#start">Send us a single-source part</a>
+      <a class="btn btn-ghost" href="#how">See how it works</a>
+    </div>
+    <div class="hero-meta">
+      <span><b>US + EU</b> industrial base</span>
+      <span><b>Public-data</b> capability graph</span>
+      <span><b>Pre-seed</b> · design-partner stage</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── DEMO CARD ─────────────────────────────────────── -->
+<div class="wrap demo-hold">
+  <div class="glass demo rv" id="demo">
+    <div class="demo-top">
+      <i class="dot"></i> Stellrix / capability search
+      <span>Session 0447 · unclassified</span>
+    </div>
+
+    <div class="demo-body">
+      <p class="prompt">
+        <em>P/N 4471-A2</em> — Inconel 718 forged bracket to AMS 5662, ±0.0005 in true position, single-source since 2011, 41-week lead time.
+        Who else in the country could build this, and how far are they from qualified?
+      </p>
+
+      <div class="worker" data-worker>
+        <span class="worker-tag">@permit-trace</span>
+        <p class="worker-txt">Reads state air-quality and environmental permits, which name every heat treat, plating, anodising and coating line a facility is licensed to operate.</p>
+        <span class="worker-bar"><i></i></span>
+      </div>
+
+      <div class="worker" data-worker>
+        <span class="worker-tag">@tdp-decompose</span>
+        <p class="worker-txt">Turns the drawing into a query — process sequence, machine class, work envelope, tolerance band, material pedigree, inspection regime.</p>
+        <span class="worker-bar"><i></i></span>
+      </div>
+
+      <div class="worker" data-worker>
+        <span class="worker-tag">@graph-match</span>
+        <p class="worker-txt">Scores every facility in the graph on process fit, capacity headroom, financial condition and distance to your plant.</p>
+        <span class="worker-bar"><i></i></span>
+      </div>
+
+      <div class="worker" data-worker>
+        <span class="worker-tag">@qual-distance</span>
+        <p class="worker-txt">Names the blocking certification for each shop and returns months-to-qualified as a distribution with a confidence band.</p>
+        <span class="worker-bar"><i></i></span>
+      </div>
+
+      <div class="done" id="done">
+        <span class="tick">✓</span>
+        <span><b>3 facilities build this part today. 217 are physically capable of it.</b> Fourteen sit inside nine months of qualified — ranked, evidence-linked, and handed to your qualification engineers as a shortlist, not an assertion.</span>
+      </div>
+
+      <div class="maps" id="maps">
+        <div class="map">
+          <div class="map-h"><span>Makes it today</span><span class="map-n">3</span></div>
+          <svg viewBox="0 0 260 132" role="img" aria-label="Map field showing three current suppliers">
+            <defs><pattern id="latA" width="13" height="13" patternUnits="userSpaceOnUse">
+              <circle cx="1.4" cy="1.4" r="1.1" fill="rgba(255,255,255,.10)"/></pattern></defs>
+            <rect width="260" height="132" fill="url(#latA)"/>
+            <circle cx="66" cy="53" r="3.6" fill="#FF6A1A"/>
+            <circle cx="157" cy="79" r="3.6" fill="#FF6A1A"/>
+            <circle cx="196" cy="40" r="3.6" fill="#FF6A1A"/>
+          </svg>
+        </div>
+        <div class="map">
+          <div class="map-h"><span>Could make it</span><span class="map-n acc">217</span></div>
+          <svg viewBox="0 0 260 132" role="img" aria-label="Map field showing two hundred and seventeen capable facilities">
+            <defs><pattern id="latB" width="13" height="13" patternUnits="userSpaceOnUse">
+              <circle cx="1.4" cy="1.4" r="1.1" fill="rgba(255,255,255,.10)"/></pattern></defs>
+            <rect width="260" height="132" fill="url(#latB)"/>
+            <circle cx="229.0" cy="64.3" r="2.5" fill="#FF6A1A" opacity="0.64"/>
+            <circle cx="197.4" cy="77.9" r="2.5" fill="#FF6A1A" opacity="0.85"/>
+            <circle cx="201.3" cy="51.2" r="2.5" fill="#FF6A1A" opacity="0.49"/>
+            <circle cx="160.1" cy="66.2" r="2.5" fill="#FF6A1A" opacity="0.78"/>
+            <circle cx="83.3" cy="40.7" r="2.5" fill="#FF6A1A" opacity="0.72"/>
+            <circle cx="60.1" cy="47.6" r="2.5" fill="#FF6A1A" opacity="0.52"/>
+            <circle cx="208.2" cy="66.5" r="2.5" fill="#FF6A1A" opacity="0.6"/>
+            <circle cx="130.7" cy="50.4" r="2.5" fill="#FF6A1A" opacity="0.8"/>
+            <circle cx="115.3" cy="45.6" r="2.5" fill="#FF6A1A" opacity="0.59"/>
+            <circle cx="180.5" cy="37.3" r="2.5" fill="#FF6A1A" opacity="0.61"/>
+            <circle cx="154.4" cy="97.4" r="2.5" fill="#FF6A1A" opacity="0.5"/>
+            <circle cx="187.8" cy="38.0" r="2.5" fill="#FF6A1A" opacity="0.8"/>
+            <circle cx="98.6" cy="45.4" r="2.5" fill="#FF6A1A" opacity="0.42"/>
+            <circle cx="105.2" cy="38.5" r="2.5" fill="#FF6A1A" opacity="0.66"/>
+            <circle cx="193.3" cy="43.9" r="2.5" fill="#FF6A1A" opacity="0.7"/>
+            <circle cx="89.0" cy="51.5" r="2.5" fill="#FF6A1A" opacity="0.64"/>
+            <circle cx="122.4" cy="88.6" r="2.5" fill="#FF6A1A" opacity="0.77"/>
+            <circle cx="79.4" cy="69.2" r="2.5" fill="#FF6A1A" opacity="0.57"/>
+            <circle cx="32.6" cy="56.0" r="2.5" fill="#FF6A1A" opacity="0.56"/>
+            <circle cx="103.8" cy="92.8" r="2.5" fill="#FF6A1A" opacity="0.84"/>
+            <circle cx="197.6" cy="38.9" r="2.5" fill="#FF6A1A" opacity="0.46"/>
+            <circle cx="107.2" cy="45.1" r="2.5" fill="#FF6A1A" opacity="0.79"/>
+            <circle cx="217.8" cy="70.1" r="2.5" fill="#FF6A1A" opacity="0.76"/>
+            <circle cx="137.7" cy="66.2" r="2.5" fill="#FF6A1A" opacity="0.82"/>
+            <circle cx="111.3" cy="90.5" r="2.5" fill="#FF6A1A" opacity="0.47"/>
+            <circle cx="60.2" cy="84.0" r="2.5" fill="#FF6A1A" opacity="0.52"/>
+            <circle cx="127.9" cy="72.6" r="2.5" fill="#FF6A1A" opacity="0.59"/>
+            <circle cx="215.1" cy="85.3" r="2.5" fill="#FF6A1A" opacity="0.46"/>
+            <circle cx="184.3" cy="85.3" r="2.5" fill="#FF6A1A" opacity="0.55"/>
+            <circle cx="121.5" cy="48.7" r="2.5" fill="#FF6A1A" opacity="0.84"/>
+            <circle cx="206.5" cy="44.6" r="2.5" fill="#FF6A1A" opacity="0.82"/>
+            <circle cx="225.2" cy="80.3" r="2.5" fill="#FF6A1A" opacity="0.53"/>
+            <circle cx="156.1" cy="57.8" r="2.5" fill="#FF6A1A" opacity="0.73"/>
+            <circle cx="146.2" cy="67.9" r="2.5" fill="#FF6A1A" opacity="0.43"/>
+            <circle cx="59.3" cy="94.3" r="2.5" fill="#FF6A1A" opacity="0.64"/>
+            <circle cx="37.0" cy="90.8" r="2.5" fill="#FF6A1A" opacity="0.44"/>
+            <circle cx="214.3" cy="77.9" r="2.5" fill="#FF6A1A" opacity="0.57"/>
+            <circle cx="102.9" cy="58.5" r="2.5" fill="#FF6A1A" opacity="0.6"/>
+            <circle cx="230.4" cy="72.8" r="2.5" fill="#FF6A1A" opacity="0.54"/>
+            <circle cx="175.7" cy="75.5" r="2.5" fill="#FF6A1A" opacity="0.82"/>
+            <circle cx="158.5" cy="43.2" r="2.5" fill="#FF6A1A" opacity="0.51"/>
+            <circle cx="190.9" cy="96.4" r="2.5" fill="#FF6A1A" opacity="0.79"/>
+            <circle cx="116.7" cy="39.0" r="2.5" fill="#FF6A1A" opacity="0.6"/>
+            <circle cx="70.9" cy="76.7" r="2.5" fill="#FF6A1A" opacity="0.44"/>
+            <circle cx="140.2" cy="83.2" r="2.5" fill="#FF6A1A" opacity="0.65"/>
+            <circle cx="47.9" cy="79.5" r="2.5" fill="#FF6A1A" opacity="0.72"/>
+            <circle cx="67.4" cy="91.1" r="2.5" fill="#FF6A1A" opacity="0.81"/>
+            <circle cx="150.3" cy="53.9" r="2.5" fill="#FF6A1A" opacity="0.62"/>
+            <circle cx="208.6" cy="74.1" r="2.5" fill="#FF6A1A" opacity="0.85"/>
+            <circle cx="115.2" cy="83.6" r="2.5" fill="#FF6A1A" opacity="0.81"/>
+            <circle cx="179.8" cy="96.0" r="2.5" fill="#FF6A1A" opacity="0.64"/>
+            <circle cx="208.0" cy="85.2" r="2.5" fill="#FF6A1A" opacity="0.71"/>
+            <circle cx="216.4" cy="45.9" r="2.5" fill="#FF6A1A" opacity="0.61"/>
+            <circle cx="199.6" cy="32.4" r="2.5" fill="#FF6A1A" opacity="0.8"/>
+            <circle cx="197.4" cy="89.0" r="2.5" fill="#FF6A1A" opacity="0.67"/>
+            <circle cx="72.6" cy="42.5" r="2.5" fill="#FF6A1A" opacity="0.72"/>
+            <circle cx="76.9" cy="57.5" r="2.5" fill="#FF6A1A" opacity="0.75"/>
+            <circle cx="147.0" cy="87.4" r="2.5" fill="#FF6A1A" opacity="0.61"/>
+            <circle cx="66" cy="53" r="3.6" fill="#FF9147"/>
+            <circle cx="157" cy="79" r="3.6" fill="#FF9147"/>
+            <circle cx="196" cy="40" r="3.6" fill="#FF9147"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="bar">
+        <span class="bar-txt">Attach a technical data package, or paste a part number…</span>
+        <span class="chip">TDP upload</span>
+        <span class="chip">AS9100 + NADCAP</span>
+        <span class="chip">CMMC L2+</span>
+        <button class="send" aria-label="Run capability search">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── THE PROBLEM ───────────────────────────────────── -->
+<section class="sec" id="problem">
+  <div class="wrap">
+    <span class="eyebrow rv">The problem</span>
+    <p class="state state-w rv">America has the machines. It has never had the map — so every surge runs back through the same saturated few thousand shops, and the rest of the industrial base stays <span class="hl">structurally invisible.</span></p>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ──────────────────────────────────── -->
+<section class="sec" id="how">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <span class="eyebrow rv">How it works</span>
+        <h2 class="h2 rv">From one drawing to a ranked list of shops that could build it.</h2>
+      </div>
+      <div class="split-r rv">
+        <p class="lead">Four layers, each one evidence-linked. Nothing in the graph is asserted: every capability attribute carries the permit, certificate or record that produced it, and every output is a shortlist for a human qualification engineer.</p>
+        <a class="btn btn-ghost" href="#start">Read the method</a>
+      </div>
+    </div>
+
+    <div class="row3">
+
+      <article class="card rv">
+        <div class="card-vis">
+          <div class="photo"><div class="photo-fb"></div>
+            <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?auto=format&fit=crop&w=1200&q=70" alt="" loading="lazy" onerror="this.remove()"></div>
+          <div class="veil"></div>
+          <div class="panel">
+            <div class="p-head"><span>Facility record · OH-4471</span><span class="status ok">Verified</span></div>
+            <div class="kv"><span>NAICS</span><span>332710 · machine shop</span></div>
+            <div class="kv"><span>Air permit</span><span class="a">Vacuum heat treat</span></div>
+            <div class="kv"><span>Special process</span><span>NADCAP HT · NDT</span></div>
+            <div class="kv"><span>Envelope</span><span>5-axis · 1200×800×700</span></div>
+            <div class="kv"><span>Tolerance</span><span>±0.0004 in demonstrated</span></div>
+            <div class="hr"></div>
+            <div class="kv"><span>Capacity headroom</span><span class="a">39%</span></div>
+            <div class="meter"><i style="width:39%"></i></div>
+          </div>
+        </div>
+        <div class="card-txt">
+          <h3 class="h3">The capability graph</h3>
+          <p>Every industrial facility in the country, described by what it can physically do rather than by who it currently sells to. Assembled from environmental permits, certification registries, machine tool imports, auction records, job postings and property filings.</p>
+        </div>
+      </article>
+
+      <article class="card rv">
+        <div class="card-vis">
+          <div class="photo"><div class="photo-fb"></div>
+            <img src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=1200&q=70" alt="" loading="lazy" onerror="this.remove()"></div>
+          <div class="veil"></div>
+          <div class="panel">
+            <div class="p-head"><span>TDP parse</span><span class="status">4471-A2</span></div>
+            <p class="log">
+              <b>material</b> <i>AMS 5662 · Inconel 718</i><br>
+              <b>seq&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> <i>forge → rough mill → solution treat</i><br>
+              <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> <i>age harden → finish mill → NDT</i><br>
+              <b>tol&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> <i>±0.0005 TP · Ra 32</i><br>
+              <b>process&nbsp;&nbsp;</b> <i>NADCAP HT authority required</i><br>
+              <b>inspect&nbsp;&nbsp;</b> <i>FAI to AS9102 · CMM</i><br>
+              <b>pedigree</b> <i>melt source traceable · DFARS</i>
+            </p>
+            <div class="hr"></div>
+            <div class="kv"><span>Query built</span><span class="a">18 constraints</span></div>
+          </div>
+        </div>
+        <div class="card-txt">
+          <h3 class="h3">Part decomposition</h3>
+          <p>A technical data package goes in; manufacturing requirements come out. Process sequence, machine class, tolerances, special process authorities, inspection regime and material pedigree — the step that turns a drawing into something searchable.</p>
+        </div>
+      </article>
+
+      <article class="card rv">
+        <div class="card-vis">
+          <div class="photo"><div class="photo-fb"></div>
+            <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=1200&q=70" alt="" loading="lazy" onerror="this.remove()"></div>
+          <div class="veil"></div>
+          <div class="panel">
+            <div class="p-head"><span>Qualification distance</span><span class="status ok">P50 · 7.4 mo</span></div>
+            <div class="kv"><span>OH-4471</span><span class="a">5.1 mo · CMMC L2 pending</span></div>
+            <div class="kv"><span>TX-0982</span><span>6.8 mo · FAI + tooling</span></div>
+            <div class="kv"><span>PA-1144</span><span>7.9 mo · NADCAP HT</span></div>
+            <div class="kv"><span>WI-3320</span><span>11.2 mo · ECP required</span></div>
+            <div class="hr"></div>
+            <div class="p-head"><span>Months to qualified · 14 shops</span></div>
+            <div class="bars">
+              <i style="height:26%"></i><i style="height:52%"></i><i class="a" style="height:78%"></i>
+              <i class="a" style="height:100%"></i><i class="a" style="height:71%"></i><i style="height:48%"></i>
+              <i style="height:34%"></i><i style="height:22%"></i><i style="height:16%"></i><i style="height:11%"></i>
+            </div>
+          </div>
+        </div>
+        <div class="card-txt">
+          <h3 class="h3">Qualification Distance</h3>
+          <p>Capable is not qualified. For each shop and each part we compute what stands between here and delivered hardware — missing certification, special process authority, tooling, first article difficulty — as a time and cost distribution with a confidence band.</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── WHAT WE BELIEVE ───────────────────────────────── -->
+<section class="sec sec-tight" id="believe">
+  <div class="wrap">
+    <div class="mid mid-wide">
+      <span class="eyebrow rv">What we believe</span>
+      <p class="state mid mid-wide rv">Qualification time is treated as a fact of nature. It is <span class="hl">a measurement nobody has taken.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ── CAPABILITIES ──────────────────────────────────── -->
+<section class="sec" id="capabilities">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <span class="eyebrow rv">Capabilities</span>
+        <h2 class="h2 rv">Built for whoever has to name a second source by Friday.</h2>
+      </div>
+      <div class="split-r rv">
+        <p class="lead">New-entrant primes scaling faster than any supply base can follow. Traditional primes with a tier-three casting problem. Program offices asked what it would take to triple a rate. Private equity trying to tell differentiated capability from commodity capacity.</p>
+        <a class="btn btn-ghost" href="#start">Talk to us about a part</a>
+      </div>
+    </div>
+
+    <div class="row3">
+
+      <article class="card rv">
+        <div class="card-vis">
+          <div class="photo"><div class="photo-fb"></div>
+            <img src="https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=1200&q=70" alt="" loading="lazy" onerror="this.remove()"></div>
+          <div class="veil"></div>
+          <div class="panel">
+            <div class="p-head"><span>Capability search</span><span class="status">217 hits</span></div>
+            <div class="kv"><span>OH-4471 · Dayton</span><span class="a">fit 0.94</span></div>
+            <div class="kv"><span>TX-0982 · Fort Worth</span><span class="a">fit 0.91</span></div>
+            <div class="kv"><span>PA-1144 · Erie</span><span>fit 0.88</span></div>
+            <div class="kv"><span>IN-2207 · Kokomo</span><span>fit 0.86</span></div>
+            <div class="kv"><span>WI-3320 · Racine</span><span>fit 0.83</span></div>
+            <div class="hr"></div>
+            <p class="log">
+              <b>filter</b> <i>within 500 mi · headroom &gt; 25%</i><br>
+              <b>filter</b> <i>DFARS melt · no foreign ownership</i><br>
+              <b>rank&nbsp;&nbsp;</b> <i>fit · capacity · risk · distance</i>
+            </p>
+          </div>
+        </div>
+        <div class="card-txt">
+          <h3 class="h3">Capability search</h3>
+          <p>Ask who can make a part and get an answer from the whole industrial base rather than from a sourcing engineer's contact list. Ranked by process fit, geography, capacity headroom, financial condition and risk.</p>
+        </div>
+      </article>
+
+      <article class="card rv">
+        <div class="card-vis">
+          <div class="photo"><div class="photo-fb"></div>
+            <img src="https://images.unsplash.com/photo-1590959651373-a3db0f38a961?auto=format&fit=crop&w=1200&q=70" alt="" loading="lazy" onerror="this.remove()"></div>
+          <div class="veil"></div>
+          <div class="panel">
+            <div class="p-head"><span>Surge model · rate ×3</span><span class="status">Ceiling 1.7×</span></div>
+            <div class="kv"><span>Airframe machining</span><span>clear</span></div>
+            <div class="kv"><span>Energetics precursor</span><span class="a">binding</span></div>
+            <div class="kv"><span>Seeker optics</span><span class="a">binding</span></div>
+            <div class="kv"><span>Forged housing</span><span>clear at 2.4×</span></div>
+            <div class="hr"></div>
+            <div class="kv"><span>Move the ceiling to 3×</span><span class="a">2 qual programs</span></div>
+            <div class="bars">
+              <i style="height:100%"></i><i style="height:88%"></i><i class="a" style="height:31%"></i>
+              <i class="a" style="height:24%"></i><i style="height:76%"></i><i style="height:69%"></i>
+              <i style="height:92%"></i><i style="height:58%"></i><i style="height:81%"></i><i style="height:44%"></i>
+            </div>
+          </div>
+        </div>
+        <div class="card-txt">
+          <h3 class="h3">Program surge modelling</h3>
+          <p>Give us a rate target for a system. We decompose the bill of materials, find every constrained node, and compute where the real ceiling is — plus which qualification investments would move it, and by how much.</p>
+        </div>
+      </article>
+
+      <article class="card rv">
+        <div class="card-vis">
+          <div class="photo"><div class="photo-fb"></div>
+            <img src="https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fit=crop&w=1200&q=70" alt="" loading="lazy" onerror="this.remove()"></div>
+          <div class="veil"></div>
+          <div class="panel">
+            <div class="p-head"><span>Supplier profile · free</span><span class="status ok">Claimed</span></div>
+            <div class="kv"><span>Processes on file</span><span>11</span></div>
+            <div class="kv"><span>Corrections accepted</span><span class="a">4</span></div>
+            <div class="hr"></div>
+            <div class="p-head"><span>Work you are close to</span></div>
+            <div class="kv"><span>Forged bracket family</span><span class="a">5.1 mo</span></div>
+            <div class="kv"><span>Pump housing · Ti</span><span>8.4 mo</span></div>
+            <div class="kv"><span>Blocking item</span><span class="a">CMMC L2</span></div>
+            <div class="hr"></div>
+            <p class="log"><b>note</b> <i>verification improves graph accuracy</i></p>
+          </div>
+        </div>
+        <div class="card-txt">
+          <h3 class="h3">Profiles for manufacturers</h3>
+          <p>A capable shop with no defense relationships currently has no route in. Claim a free profile, see the work you are closest to qualifying for, and correct your own record — which is how the map stays true.</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FOUR PILLARS ──────────────────────────────────── -->
+<section class="sec sec-tight" id="pillars">
+  <div class="wrap">
+    <div class="mid mid-wide">
+      <span class="eyebrow rv">What you get</span>
+      <h2 class="h2 rv">Four commitments the product is built around.</h2>
+    </div>
+    <div class="row4">
+      <div class="pil rv">
+        <h4>Evidence-linked</h4>
+        <p>Every capability attribute carries the permit, certificate or record it came from. Open any claim and read the source that produced it.</p>
+      </div>
+      <div class="pil rv">
+        <h4>Confidence-scored</h4>
+        <p>Outputs are ranked shortlists with confidence bands, never assertions. We narrow two hundred thousand to twenty. Your engineers decide between the twenty.</p>
+      </div>
+      <div class="pil rv">
+        <h4>Unclassified by construction</h4>
+        <p>The graph is assembled entirely from public, commercially available data and carries no export-controlled content. That is an architectural choice, not a policy.</p>
+      </div>
+      <div class="pil rv">
+        <h4>Two-sided</h4>
+        <p>Shops hold free profiles and correct their own records. Ground truth arrives from the people who own the machines, and it keeps arriving.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOUNDER (on-page) ─────────────────────────────── -->
+<section class="sec" id="founder">
+  <div class="wrap">
+    <div class="founder">
+
+      <div class="portrait rv">
+        <div class="portrait-fb">
+          <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path d="M16 2.5 27.5 9v14L16 29.5 4.5 23V9z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M16 9.4l1.7 4.9 4.9 1.7-4.9 1.7-1.7 4.9-1.7-4.9L9.4 16l4.9-1.7z" fill="currentColor"/>
+          </svg>
+        </div>
+        <!-- Drop the portrait at assets/kush-jain.jpg -->
+        <img src="assets/kush-jain.jpg" alt="Kush Jain, founder of Stellrix" onerror="this.remove()">
+        <div class="badge">
+          <b>Kush Jain</b>
+          <span>Founder · Stellrix</span>
+        </div>
+      </div>
+
+      <div class="f-body">
+        <span class="eyebrow rv">Founder</span>
+        <h2 class="h2 rv">Somebody has to assemble the list.</h2>
+        <!-- PLACEHOLDER COPY — replace with Kush's own words and credentials before launch. -->
+        <p class="rv">Stellrix began with a question that should have had an easy answer and didn't: when one supplier holds up a program, who else in the country could build the part? There is no list. There has never been a list — not because the data is missing, but because nobody has assembled fifty state permit registries, certification records, machine tool imports and auction filings into a single map of what industry can do.</p>
+        <p class="rv">We are building that map, and the metric that goes with it. Qualification Distance turns an unanswerable strategic question — can we second-source this? — into an operational one: here are fourteen shops within nine months of qualified, ranked by cost, capacity and risk. If you have a part with exactly one supplier, that is the conversation I want to have.</p>
+        <blockquote class="quote rv">Capacity is not missing. It is unlisted.</blockquote>
+        <div class="f-cta rv">
+          <a class="btn btn-acc" href="mailto:founder@stellrix.online">founder@stellrix.online</a>
+          <a class="btn btn-ghost" href="https://www.linkedin.com/in/kushjain7/" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── TRUST & DATA ──────────────────────────────────── -->
+<section class="sec" id="trust">
+  <div class="wrap">
+    <span class="eyebrow rv">Trust &amp; data</span>
+    <h2 class="h2 rv" style="max-width:20ch">Controlled data is a gate in this sector, not a footnote.</h2>
+
+    <div class="trust">
+      <div class="rv">
+        <p class="lead">The capability graph is built entirely from unclassified, public, commercially available records, so it carries no export-controlled content by construction. Where a technical data package is genuinely required, it is handled in a segregated environment with US person access controls — and wherever possible the product works from requirement abstractions instead, so controlled material never needs to be ingested at all.</p>
+        <div class="tags">
+          <span class="tag">Public-data graph</span>
+          <span class="tag">No controlled TDP ingest by default</span>
+          <span class="tag">ITAR-segregated enclave</span>
+          <span class="tag">US person access control</span>
+          <span class="tag">CUI handling</span>
+          <span class="tag">RBAC + full audit trail</span>
+          <span class="tag">SOC 2 Type II on roadmap</span>
+          <span class="tag">FedRAMP / IL path</span>
+        </div>
+      </div>
+
+      <div class="grid-art rv">
+        <p class="art-note">Architecture first · policy second</p>
+        <div class="art-cta">
+          <a class="btn btn-ghost" href="mailto:founder@stellrix.online?subject=Stellrix%20data%20posture">Read our data posture</a>
+          <a class="btn btn-acc" href="#start">Book a demo</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ─────────────────────────────────────── -->
+<section class="sec fin" id="start">
+  <div class="wrap">
+    <span class="eyebrow rv">Get started</span>
+    <h2 class="h2 rv">Send us one part you can only buy from one supplier.<br>We'll show you who else could build it.</h2>
+    <div class="fin-cta rv">
+      <a class="btn btn-white" href="mailto:founder@stellrix.online?subject=Single-source%20part">Email founder@stellrix.online</a>
+      <a class="btn btn-ghost" href="https://www.linkedin.com/in/kushjain7/" target="_blank" rel="noopener">Reach the founder</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ── FOOTER ────────────────────────────────────────── -->
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="brand" href="#top" aria-label="Stellrix home">
+          <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path d="M16 2.5 27.5 9v14L16 29.5 4.5 23V9z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+            <path d="M16 9.4l1.7 4.9 4.9 1.7-4.9 1.7-1.7 4.9-1.7-4.9L9.4 16l4.9-1.7z" fill="currentColor"/>
+          </svg>
+          <span class="brand-name">STELLRIX</span>
+        </a>
+        <p>A map of what American industry can make — not what it currently sells.</p>
+      </div>
+
+      <div class="fcol">
+        <h5>Product</h5>
+        <a href="#how">Capability graph</a>
+        <a href="#capabilities">Capability search</a>
+        <a href="#how">Qualification Distance</a>
+        <a href="#capabilities">Surge modelling</a>
+      </div>
+
+      <div class="fcol">
+        <h5>Who it's for</h5>
+        <a href="#capabilities">New-entrant primes</a>
+        <a href="#capabilities">Traditional primes</a>
+        <a href="#capabilities">Program offices</a>
+        <a href="#capabilities">Defense-focused PE</a>
+      </div>
+
+      <div class="fcol">
+        <h5>Manufacturers</h5>
+        <a href="#capabilities">Claim your profile</a>
+        <a href="#capabilities">Work you're close to</a>
+        <a href="#how">How we source data</a>
+        <a href="#trust">Verification</a>
+      </div>
+
+      <div class="fcol">
+        <h5>Company</h5>
+        <a href="#founder">Founder</a>
+        <a href="#trust">Trust &amp; data</a>
+        <a href="mailto:founder@stellrix.online">Contact</a>
+        <a href="https://www.linkedin.com/in/kushjain7/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+
+    <div class="mark" aria-hidden="true">STELLRIX</div>
+
+    <div class="foot-bot">
+      <span>© 2026 Stellrix</span>
+      <span>Kush Jain · <a href="https://stellrix.online">stellrix.online</a></span>
+      <span><a href="mailto:founder@stellrix.online">founder@stellrix.online</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* nav compaction on scroll */
+  var nav = document.getElementById('nav');
+  function onScroll(){
+    if (window.scrollY > 40) nav.classList.add('small');
+    else nav.classList.remove('small');
+  }
+  onScroll();
+  window.addEventListener('scroll', onScroll, {passive:true});
+
+  /* mobile sheet */
+  var burger = document.getElementById('burger'),
+      sheet  = document.getElementById('sheet'),
+      sheetX = document.getElementById('sheetX');
+  function closeSheet(){ sheet.classList.remove('open'); burger.setAttribute('aria-expanded','false'); }
+  burger.addEventListener('click', function(){
+    var open = sheet.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  sheetX.addEventListener('click', closeSheet);
+  sheet.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeSheet); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeSheet(); });
+
+  if (reduce) {
+    document.querySelectorAll('.rv,.worker,.done,.maps').forEach(function(el){ el.classList.add('in'); });
+  } else {
+    /* scroll reveal */
+    var revealer = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ e.target.classList.add('in'); revealer.unobserve(e.target); }
+      });
+    }, {threshold:0.12, rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('.rv').forEach(function(el){ revealer.observe(el); });
+
+    /* hero demo card: workers resolve in sequence */
+    var demo    = document.getElementById('demo'),
+        workers = demo.querySelectorAll('[data-worker]'),
+        done    = document.getElementById('done'),
+        maps    = document.getElementById('maps');
+
+    var runner = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (!e.isIntersecting) return;
+        runner.unobserve(e.target);
+        workers.forEach(function(w,i){
+          setTimeout(function(){ w.classList.add('in'); }, 320 + i*520);
+        });
+        setTimeout(function(){ done.classList.add('in'); }, 320 + workers.length*520 + 220);
+        setTimeout(function(){ maps.classList.add('in'); }, 320 + workers.length*520 + 560);
+      });
+    }, {threshold:0.25});
+    runner.observe(demo);
+  }
+
+  /* active nav link follows scroll position */
+  var links = {};
+  document.querySelectorAll('[data-link]').forEach(function(a){ links[a.dataset.link] = a; });
+  var watched = ['how','capabilities','founder','trust']
+    .map(function(id){ return document.getElementById(id); })
+    .filter(Boolean);
+
+  var spy = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      var a = links[e.target.id];
+      if (!a) return;
+      if (e.isIntersecting){
+        Object.keys(links).forEach(function(k){ links[k].classList.remove('on'); });
+        a.classList.add('on');
+      }
+    });
+  }, {rootMargin:'-45% 0px -50% 0px'});
+  watched.forEach(function(s){ spy.observe(s); });
+})();
+</script>
+
+</body>
+</html>
